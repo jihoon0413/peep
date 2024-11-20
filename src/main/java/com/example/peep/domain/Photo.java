@@ -1,12 +1,12 @@
 package com.example.peep.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
-
+@Getter
+@NoArgsConstructor
 @Entity
 public class Photo extends AuditingFields{
 
@@ -18,4 +18,11 @@ public class Photo extends AuditingFields{
     @Column
     private String photoUrl;
 
+    private Photo(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public static Photo of(String photoUrl) {
+        return new Photo(photoUrl);
+    }
 }
