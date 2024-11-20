@@ -34,12 +34,14 @@ public record StudentDto(
         );
     }
 
-    public Student toEntity(School school) {
+    public Student toEntity(School school, Coin coin, Photo photo) {
         return Student.of(
                 userId,
                 userPassword,
                 name,
                 school,
+                coin,
+                photo,
                 grade,
                 myClass,
                 tel

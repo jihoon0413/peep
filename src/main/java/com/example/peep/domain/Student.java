@@ -67,18 +67,20 @@ public class Student extends AuditingFields {
     @Setter @Column private String tel;
 
 
-    private Student (String userId, String userPassword, String name, School school, int grade, int myClass , String tel) {
+    private Student (String userId, String userPassword, String name, School school, Coin coin, Photo photo, int grade, int myClass , String tel) {
         this.userId = userId;
         this.userPassword = userPassword;
         this.name = name;
         this.school = school;
+        this.coin = coin;
+        this.photo = photo;
         this.grade = grade;
         this.myClass = myClass;
         this.tel = tel;
     }
 
-    public static Student of(String userId, String userPassword, String name, School school, int grade, int myClass, String tel) {
-        return new Student(userId, userPassword, name, school, grade, myClass, tel);
+    public static Student of(String userId, String userPassword, String name, School school, Coin coin, Photo photo, int grade, int myClass, String tel) {
+        return new Student(userId, userPassword, name, school, coin, photo, grade, myClass, tel);
     }
 
     @Override
