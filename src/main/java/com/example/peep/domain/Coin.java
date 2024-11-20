@@ -1,13 +1,12 @@
 package com.example.peep.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
-
+@Getter
+@NoArgsConstructor
 @Entity
 public class Coin extends AuditingFields{
 
@@ -19,9 +18,11 @@ public class Coin extends AuditingFields{
     @Column
     private int myCoin;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @LastModifiedDate
-    @Column
-    private LocalDateTime updatedAt;
+    private Coin(int myCoin) {
+        this.myCoin = myCoin;
+    }
 
+    public static Coin of(int myCoin) {
+        return new Coin(myCoin);
+    }
 }
