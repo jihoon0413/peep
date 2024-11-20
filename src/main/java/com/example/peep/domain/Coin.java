@@ -19,9 +19,4 @@ public class Coin extends AuditingFields{
     @Column
     private int myCoin;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @LastModifiedDate
-    @Column
-    private LocalDateTime updatedAt;
-
 }

@@ -30,6 +30,6 @@ public class AuditingFields {
     @Column
     protected LocalDateTime updatedAt;
 
-    @Setter @Column private boolean isDeleted;
+    @Setter @Column protected Boolean isDeleted;
 
 }
