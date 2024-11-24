@@ -1,5 +1,6 @@
 package com.example.peep.controller;
 
+import com.example.peep.config.jwt.JwtToken;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public String getStudent(@RequestParam String userId) {
+    public String getStudent(@RequestParam("userId") String userId) {
         return studentService.getStudent(userId);
     }
 
@@ -23,6 +24,13 @@ public class StudentController {
         return "success";
     }
 
+    @PostMapping("/login")
+    public JwtToken login(@RequestBody StudentDto studentDto) {
+         return studentService.login(studentDto);
+    }
 
-
+//    @GetMapping("/refresh")
+//    public JwtToken refreshToken() {
+//        return studentService.refreshToken();
+//    }
 }
