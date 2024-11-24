@@ -28,7 +28,7 @@ insert into hashtag (id, content) values (3, 'Khaki');
 insert into hashtag (id, content) values (4, 'Aquamarine');
 insert into hashtag (id, content) values (5, 'Turquoise');
 
-insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (1, 'jihoon', '1234', '신지훈', 1, 1, 1, '181-445-5294', 1, 1, '2024-05-18 14:19:00', '2024-06-29 16:29:12', false);
+insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (1, 'jihoon', '$2a$10$pLwVE3EJmIPkRqvVLVbRKe0RRSwbC1p2tVdZrDhv6S65y9joeOYxC', '신지훈', 1, 1, 1, '181-445-5294', 1, 1, '2024-05-18 14:19:00', '2024-06-29 16:29:12', false);
 insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (2, 'minji', '1234', '서민지', 1, 2, 2, '397-992-0977', 1, 1, '2024-03-15 01:07:48', '2024-08-14 11:15:17', true);
 insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (3, 'inseo', '1234', '박인서', 1, 3, 3, '698-895-8592', 1, 1, '2024-09-22 05:37:18', '2024-08-05 11:34:22', true);
 insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (4, 'soomin', '1234', '유수민', 1, 4, 4, '853-879-3906', 1, 1, '2024-10-14 20:42:28', '2023-12-30 14:05:07', false);
