@@ -2,9 +2,9 @@ package com.example.peep.config.jwt;
 
 import com.example.peep.domain.RefreshToken;
 import com.example.peep.repository.RefreshTokenRepository;
+import com.example.peep.service.TokenBlacklistService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -32,9 +31,11 @@ public class JwtTokenProvider {
     private final long refreshExpiration = 1000 * 60 * 60 * 24 * 7; //1week
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenBlacklistService tokenBlacklistService;
 
-    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey, RefreshTokenRepository refreshTokenRepository) {
+    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey, RefreshTokenRepository refreshTokenRepository, TokenBlacklistService tokenBlacklistService) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.tokenBlacklistService = tokenBlacklistService;
 
         byte[] secretByteKey = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(secretByteKey);
@@ -114,6 +115,9 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
+            if(tokenBlacklistService.isTokenBlacklisted(token)) {
+                return false;
+            }
             Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
