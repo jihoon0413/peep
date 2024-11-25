@@ -12,4 +12,8 @@ public class JwtToken {
     private String accessToken;
     private String refreshToken;
     private String id;
+
+    public static JwtToken of(String grantType, String accessToken, String refreshToken, String id) {
+        return new JwtToken(grantType, accessToken, refreshToken, id);
+    }
 }
