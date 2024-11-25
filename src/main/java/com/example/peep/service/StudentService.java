@@ -2,15 +2,10 @@ package com.example.peep.service;
 
 import com.example.peep.config.jwt.JwtToken;
 import com.example.peep.config.jwt.JwtTokenProvider;
-import com.example.peep.domain.Coin;
-import com.example.peep.domain.Photo;
-import com.example.peep.domain.School;
-import com.example.peep.domain.Student;
+import com.example.peep.domain.*;
+import com.example.peep.dto.JwtTokenDto;
 import com.example.peep.dto.StudentDto;
-import com.example.peep.repository.CoinRepository;
-import com.example.peep.repository.PhotoRepository;
-import com.example.peep.repository.SchoolRepository;
-import com.example.peep.repository.StudentRepository;
+import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +14,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +27,7 @@ public class StudentService {
     private final SchoolRepository schoolRepository;
     private final CoinRepository coinRepository;
     private final PhotoRepository photoRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -54,25 +52,35 @@ public class StudentService {
     public String getStudent(String userId) {
         System.out.println(userId);
         Student student = studentRepository.findById(1L).orElse(null);
-        System.out.println(student.getUserId());
         return student.getUserId();
     }
 
-    public JwtToken login(StudentDto studentDto) {
+    public JwtTokenDto login(String deviceId, StudentDto studentDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(studentDto.userId(), studentDto.userPassword());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        JwtToken jwtToken = jwtTokenProvider.generateToken(authentication, studentDto.userId());
+        return JwtTokenDto.from(jwtTokenProvider.generateToken(authentication, studentDto.userId(), deviceId));
 
-//        Student student = studentRepository.findById(1L).orElse(null);
-//        jwtToken.getRefreshToken()
-
-        return jwtToken;
     }
 
-//    public JwtToken refreshToken() {
-//
-//
-//    }
+    public JwtTokenDto refreshToken(String deviceId, String userId, JwtTokenDto jwtTokenDto) {
+
+        RefreshToken refresh = refreshTokenRepository.findByUserIdAndDeviceId(userId, deviceId);
+
+        String accessToken = "";
+
+        try {
+            if (jwtTokenProvider.validateToken(jwtTokenDto.refreshToken()) && jwtTokenDto.refreshToken().contains(refresh.getToken())) {
+                accessToken = jwtTokenProvider.generateAccess(userId);
+            } else {
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException e) {
+            log.info("Invalid token");
+        }
+        JwtToken jwtToken = new JwtToken("Bearer", accessToken, refresh.getToken(), userId);
+
+        return JwtTokenDto.from(jwtToken);
+    }
 }
