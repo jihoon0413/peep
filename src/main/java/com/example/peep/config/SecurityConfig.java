@@ -2,11 +2,9 @@ package com.example.peep.config;
 
 import com.example.peep.config.jwt.JwtAuthenticationFilter;
 import com.example.peep.config.jwt.JwtTokenProvider;
-import com.example.peep.details.StudentDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,23 +27,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/","/login","/loginForm","/joinForm").permitAll()
-//                        .requestMatchers("/students").permitAll()
                         .requestMatchers("/students/new").permitAll()
                         .requestMatchers("/students/login").permitAll()
+                        .requestMatchers("/students/logout").permitAll()
                         .requestMatchers("/students/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/login").permitAll()
-//                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(studentDetailService).passwordEncoder(passwordEncoder());
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -1,6 +1,5 @@
 package com.example.peep.controller;
 
-import com.example.peep.config.jwt.JwtToken;
 import com.example.peep.dto.JwtTokenDto;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.service.StudentService;
@@ -24,6 +23,8 @@ public class StudentController {
         studentService.newStudent(studentDto);
     }
 
+    //TODO: authController 를 만들어 분리하기
+
     @PostMapping("/login")
     public JwtTokenDto login( @RequestHeader("Device-Id") String deviceId,
                            @RequestBody StudentDto studentDto) {
@@ -36,5 +37,12 @@ public class StudentController {
                                  @RequestParam("userId") String userId) {
 
         return studentService.refreshToken(deviceId, userId, jwtTokenDto);
+    }
+
+    @PostMapping("/logout")
+    public String logout(@RequestBody JwtTokenDto jwtTokenDto) {
+
+        studentService.logout(jwtTokenDto);
+        return "Logout successful";
     }
 }

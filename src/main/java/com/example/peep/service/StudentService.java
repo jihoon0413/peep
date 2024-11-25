@@ -15,7 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,6 +28,7 @@ public class StudentService {
     private final CoinRepository coinRepository;
     private final PhotoRepository photoRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenBlacklistService tokenBlacklistService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -50,7 +51,6 @@ public class StudentService {
     }
 
     public String getStudent(String userId) {
-        System.out.println(userId);
         Student student = studentRepository.findById(1L).orElse(null);
         return student.getUserId();
     }
@@ -71,16 +71,27 @@ public class StudentService {
         String accessToken = "";
 
         try {
-            if (jwtTokenProvider.validateToken(jwtTokenDto.refreshToken()) && jwtTokenDto.refreshToken().contains(refresh.getToken())) {
+            if (refresh != null && jwtTokenProvider.validateToken(jwtTokenDto.refreshToken()) && jwtTokenDto.refreshToken().contains(refresh.getToken())) {
                 accessToken = jwtTokenProvider.generateAccess(userId);
             } else {
                 throw new IllegalArgumentException();
             }
         } catch (IllegalArgumentException e) {
             log.info("Invalid token");
+            return null;
         }
+        tokenBlacklistService.addToBlacklist(jwtTokenDto.accessToken(), (new Date()).getTime()+ (1000 * 60 * 30));
         JwtToken jwtToken = new JwtToken("Bearer", accessToken, refresh.getToken(), userId);
 
         return JwtTokenDto.from(jwtToken);
+    }
+
+    public void logout(JwtTokenDto jwtTokenDto) {
+
+        long now = (new Date()).getTime();
+
+        tokenBlacklistService.addToBlacklist(jwtTokenDto.accessToken(), now + (1000 * 60 * 30));
+
+        refreshTokenRepository.deleteByUserIdAndToken(jwtTokenDto.id(), jwtTokenDto.refreshToken());
     }
 }
