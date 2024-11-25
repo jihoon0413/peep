@@ -32,6 +32,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/students").permitAll()
                         .requestMatchers("/students/new").permitAll()
                         .requestMatchers("/students/login").permitAll()
+                        .requestMatchers("/students/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
 //                .formLogin(form -> form
