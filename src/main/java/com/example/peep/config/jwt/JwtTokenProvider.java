@@ -1,7 +1,10 @@
 package com.example.peep.config.jwt;
 
+import com.example.peep.domain.RefreshToken;
+import com.example.peep.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -24,39 +28,28 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private final Key key;
-//    private final long expiration = 1000 * 60 * 30; //30min
-    private final long expiration = 1000 * 20; //30min
+    private final long expiration = 1000 * 60 * 30; //30min
     private final long refreshExpiration = 1000 * 60 * 60 * 24 * 7; //1week
 
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey) {
+    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey, RefreshTokenRepository refreshTokenRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
 
         byte[] secretByteKey = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
-    public JwtToken generateToken(Authentication authentication, String id) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+    public JwtToken generateToken(Authentication authentication, String id, String deviceId) {
 
         long now = (new Date()).getTime();
-        // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + expiration);
+        Date refreshTokenExpiresIn = new Date(now + refreshExpiration);
 
+        String accessToken = generateAccess(authentication.getName());
+        String refreshToken = generateRefresh(refreshTokenExpiresIn);
 
-        String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + refreshExpiration))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        RefreshToken refresh = RefreshToken.of(authentication.getName(),deviceId, refreshToken, refreshTokenExpiresIn);
+        saveRefresh(refresh);
 
         return JwtToken.builder()
                 .grantType("Bearer")
@@ -64,7 +57,42 @@ public class JwtTokenProvider {
                 .refreshToken(refreshToken)
                 .id(id)
                 .build();
+    }
 
+    public String generateAccess(String userId) {
+
+        long now = (new Date()).getTime();
+
+        Date accessTokenExpiresIn = new Date(now + expiration);
+
+        String accessToken = Jwts.builder()
+                .setSubject(userId)
+                .claim("auth", "ROLE_USER")
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+        return accessToken;
+    }
+
+    public String generateRefresh(Date refreshTokenExpiresIn) {
+
+        String refreshToken = Jwts.builder()
+                .setExpiration(refreshTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+        return refreshToken;
+    }
+
+    public void saveRefresh(RefreshToken refreshToken){
+
+        RefreshToken refresh = refreshTokenRepository.findByUserIdAndDeviceId(refreshToken.getUserId(), refreshToken.getDeviceId());
+
+        if(refresh == null) {
+            refreshTokenRepository.save(refreshToken);
+        } else {
+            refresh.setToken(refreshToken.getToken());
+            refreshTokenRepository.save(refresh);
+        }
     }
 
     public Authentication getAuthentication(String accessToken) {
@@ -109,7 +137,5 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
-
-
 
 }
