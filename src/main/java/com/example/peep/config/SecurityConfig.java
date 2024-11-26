@@ -1,5 +1,8 @@
 package com.example.peep.config;
 
+import com.example.peep.config.jwt.JwtAuthenticationFilter;
+import com.example.peep.config.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,10 +10,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -19,12 +26,15 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/","/login","/loginForm","/joinForm").permitAll()
                         .requestMatchers("/students/new").permitAll()
-//                        .anyRequest().permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/logout").permitAll()
+                        .requestMatchers("/auth/refresh").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login").permitAll()
-                ).build();
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean

@@ -1,14 +1,8 @@
 package com.example.peep.service;
 
-import com.example.peep.domain.Coin;
-import com.example.peep.domain.Photo;
-import com.example.peep.domain.School;
-import com.example.peep.domain.Student;
+import com.example.peep.domain.*;
 import com.example.peep.dto.StudentDto;
-import com.example.peep.repository.CoinRepository;
-import com.example.peep.repository.PhotoRepository;
-import com.example.peep.repository.SchoolRepository;
-import com.example.peep.repository.StudentRepository;
+import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +39,9 @@ public class StudentService {
     }
 
     public String getStudent(String userId) {
-        System.out.println(userId);
         Student student = studentRepository.findById(1L).orElse(null);
-        System.out.println(student.getUserId());
         return student.getUserId();
     }
+
+
 }

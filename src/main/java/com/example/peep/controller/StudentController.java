@@ -13,16 +13,12 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public String getStudent(@RequestParam String userId) {
+    public String getStudent(@RequestParam("userId") String userId) {
         return studentService.getStudent(userId);
     }
 
     @PostMapping("/new")
-    public String newStudent(@RequestBody StudentDto studentDto) {
+    public void newStudent(@RequestBody StudentDto studentDto) {
         studentService.newStudent(studentDto);
-        return "success";
     }
-
-
-
 }
