@@ -28,9 +28,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/","/login","/loginForm","/joinForm").permitAll()
                         .requestMatchers("/students/new").permitAll()
-                        .requestMatchers("/students/login").permitAll()
-                        .requestMatchers("/students/logout").permitAll()
-                        .requestMatchers("/students/refresh").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/logout").permitAll()
+                        .requestMatchers("/auth/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
