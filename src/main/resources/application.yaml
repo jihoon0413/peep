@@ -22,4 +22,4 @@ spring:
     open-in-view: false
   sql.init.mode: always
   jwt:
-    secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+    secret: ${JWT_SECRET_KEY}
