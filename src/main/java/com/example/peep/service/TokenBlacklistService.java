@@ -1,35 +1,24 @@
 package com.example.peep.service;
 
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TokenBlacklistService {
 
-    private final ConcurrentHashMap<String, Long> blacklist = new ConcurrentHashMap<>();
+    @Autowired
+    private RedisTemplate<String, String> blackList;
 
-    // 토큰을 블랙리스트에 추가
-    public void addToBlacklist(String token, long expirationTime) {
-        blacklist.put(token, expirationTime);
+    private static final long CODE_EXPIRATION_SECONDS = 30;
+
+    public void addToBlacklist(String token) {
+        blackList.opsForValue().set(token, "blacklisted", CODE_EXPIRATION_SECONDS, TimeUnit.MINUTES);
     }
 
-    // 블랙리스트에서 토큰 확인
     public boolean isTokenBlacklisted(String token) {
-        Long expirationTime = blacklist.get(token);
-        if (expirationTime == null || expirationTime < System.currentTimeMillis()) {
-            blacklist.remove(token); // 만료된 블랙리스트 항목 제거
-            return false;
-        }
-        return true;
+        return Boolean.TRUE.equals(blackList.hasKey(token));
     }
-
-    @Scheduled(fixedRate = 1000 * 60 * 60) // 1시간마다 실행
-    public void removeExpiredTokens() {
-        long now = System.currentTimeMillis();
-        blacklist.entrySet().removeIf(entry -> entry.getValue() < now);
-        System.out.println("Expired tokens removed from blacklist");
-    }
-
 }
