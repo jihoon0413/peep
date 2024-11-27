@@ -1,16 +1,16 @@
 package com.example.peep.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @Service
 public class VerificationCodeService {
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     private static final long CODE_EXPIRATION_SECONDS = 300; // 5분
 
