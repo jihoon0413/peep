@@ -1,16 +1,16 @@
 package com.example.peep.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @Service
 public class TokenBlacklistService {
 
-    @Autowired
-    private RedisTemplate<String, String> blackList;
+    private final  RedisTemplate<String, String> blackList;
 
     private static final long CODE_EXPIRATION_SECONDS = 30;
 
