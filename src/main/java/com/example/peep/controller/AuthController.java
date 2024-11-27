@@ -2,9 +2,13 @@ package com.example.peep.controller;
 
 import com.example.peep.dto.JwtTokenDto;
 import com.example.peep.dto.StudentDto;
+import com.example.peep.dto.requestDto.VerifyCodeRequestDto;
 import com.example.peep.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -34,5 +38,13 @@ public class AuthController {
         return "Logout successful";
     }
 
+    @PostMapping("/sendCode")
+    public ResponseEntity<?> SendSMS(@RequestBody VerifyCodeRequestDto verifyCodeRequestDto){
+        return authService.sendSms(verifyCodeRequestDto.phoneNumber());
+    }
 
+    @PostMapping("/verifyCode")
+    public boolean checkVerifyCode(@RequestBody VerifyCodeRequestDto verifyCodeRequestDto){
+        return authService.checkVerifyCode(verifyCodeRequestDto);
+    }
 }
