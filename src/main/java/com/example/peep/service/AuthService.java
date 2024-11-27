@@ -59,7 +59,7 @@ public class AuthService {
             log.info("Invalid token");
             return null;
         }
-        tokenBlacklistService.addToBlacklist(jwtTokenDto.accessToken(), (new Date()).getTime()+ (1000 * 60 * 30));
+        tokenBlacklistService.addToBlacklist(jwtTokenDto.accessToken());
         JwtToken jwtToken = new JwtToken("Bearer", accessToken, refresh.getToken(), userId);
 
         return JwtTokenDto.from(jwtToken);
@@ -69,7 +69,7 @@ public class AuthService {
 
         long now = (new Date()).getTime();
 
-        tokenBlacklistService.addToBlacklist(jwtTokenDto.accessToken(), now + (1000 * 60 * 30));
+        tokenBlacklistService.addToBlacklist(jwtTokenDto.accessToken());
 
         refreshTokenRepository.deleteByUserIdAndToken(jwtTokenDto.id(), jwtTokenDto.refreshToken());
     }
