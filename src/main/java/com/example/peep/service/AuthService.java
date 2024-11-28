@@ -43,7 +43,7 @@ public class AuthService {
 
     }
 
-    public JwtTokenDto refreshToken(String deviceId, String userId, JwtTokenDto jwtTokenDto) {
+    public JwtTokenDto refreshToken(String deviceId, String userId, JwtTokenDto jwtTokenDto, String oldAccess) {
 
         RefreshToken refresh = refreshTokenRepository.findByUserIdAndDeviceId(userId, deviceId);
 
@@ -59,17 +59,17 @@ public class AuthService {
             log.info("Invalid token");
             return null;
         }
-        tokenBlacklistService.addToBlacklist(jwtTokenDto.accessToken());
+        tokenBlacklistService.addToBlacklist(oldAccess);
         JwtToken jwtToken = new JwtToken("Bearer", accessToken, refresh.getToken(), userId);
 
         return JwtTokenDto.from(jwtToken);
     }
 
-    public void logout(JwtTokenDto jwtTokenDto) {
+    public void logout(JwtTokenDto jwtTokenDto, String oldAccess) {
 
         long now = (new Date()).getTime();
 
-        tokenBlacklistService.addToBlacklist(jwtTokenDto.accessToken());
+        tokenBlacklistService.addToBlacklist(oldAccess);
 
         refreshTokenRepository.deleteByUserIdAndToken(jwtTokenDto.id(), jwtTokenDto.refreshToken());
     }
