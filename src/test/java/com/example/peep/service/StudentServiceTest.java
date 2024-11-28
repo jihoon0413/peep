@@ -1,13 +1,9 @@
 package com.example.peep.service;
 
-import com.example.peep.domain.Coin;
-import com.example.peep.domain.Photo;
 import com.example.peep.domain.School;
 import com.example.peep.domain.Student;
 import com.example.peep.dto.SchoolDto;
 import com.example.peep.dto.StudentDto;
-import com.example.peep.repository.CoinRepository;
-import com.example.peep.repository.PhotoRepository;
 import com.example.peep.repository.SchoolRepository;
 import com.example.peep.repository.StudentRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +25,6 @@ class StudentServiceTest {
     @Mock private StudentRepository studentRepository;
     @Mock private SchoolRepository schoolRepository;
     @Mock private PasswordEncoder passwordEncoder;
-    @Mock private CoinRepository coinRepository;
-    @Mock private PhotoRepository photoRepository;
 
     @InjectMocks
     private StudentService studentService;
