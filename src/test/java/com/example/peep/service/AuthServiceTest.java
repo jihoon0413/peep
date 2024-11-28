@@ -77,10 +77,10 @@ class AuthServiceTest {
         given(jwtTokenProvider.validateToken("refreshToken")).willReturn(true);
         given(jwtTokenProvider.generateAccess("jihoon")).willReturn("newAccessToken");
         //When
-        JwtTokenDto newToken = authService.refreshToken("UUID", "jihoon", token);
+        JwtTokenDto newToken = authService.refreshToken("UUID", "jihoon", token, "oldAccess");
 
         //Then
-        then(tokenBlacklistService).should().addToBlacklist("accessToken");
+        then(tokenBlacklistService).should().addToBlacklist("oldAccess");
         assertThat(newToken.accessToken()).isEqualTo("newAccessToken");
     }
 
@@ -92,10 +92,10 @@ class AuthServiceTest {
         JwtTokenDto jwtTokenDto = JwtTokenDto.of("Bearer", "accessToken", "refreshToken", "jihoon");
 
         //When
-        authService.logout(jwtTokenDto);
+        authService.logout(jwtTokenDto,"oldAccess");
 
         //Then
-        then(tokenBlacklistService).should().addToBlacklist("accessToken");
+        then(tokenBlacklistService).should().addToBlacklist("oldAccess");
         then(refreshTokenRepository).should().deleteByUserIdAndToken("jihoon", "refreshToken");
     }
 

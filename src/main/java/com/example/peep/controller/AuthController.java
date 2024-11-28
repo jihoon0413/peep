@@ -24,17 +24,22 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public JwtTokenDto refreshToken(@RequestHeader("Device-Id") String deviceId,
+    public JwtTokenDto refreshToken(@RequestHeader("Authorization") String accessToken,
+                                    @RequestHeader("Device-Id") String deviceId,
                                     @RequestBody JwtTokenDto jwtTokenDto,
                                     @RequestParam("userId") String userId) {
 
-        return authService.refreshToken(deviceId, userId, jwtTokenDto);
+        String oldAccess = accessToken.substring(7);
+        return authService.refreshToken(deviceId, userId, jwtTokenDto, oldAccess);
     }
 
     @PostMapping("/logout")
-    public String logout(@RequestBody JwtTokenDto jwtTokenDto) {
+    public String logout(@RequestBody JwtTokenDto jwtTokenDto,
+                         @RequestHeader("Authorization") String accessToken) {
 
-        authService.logout(jwtTokenDto);
+        String oldAccess = accessToken.substring(7);
+
+        authService.logout(jwtTokenDto, oldAccess);
         return "Logout successful";
     }
 
