@@ -23,10 +23,11 @@ public class Student extends AuditingFields {
     private Long id;
 
     @Setter @Column(name = "user_id", nullable = false, unique = true) private String userId;
-    @Setter @Column private String userPassword;
+    @Setter @Column @ToString.Exclude private String userPassword;
     @Setter @Column private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Setter
     @JoinColumn(name = "school_id")
     private School school;
 
@@ -34,7 +35,8 @@ public class Student extends AuditingFields {
     @JoinColumn(name = "coin_id")
     private Coin coin;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     @JoinColumn(name = "photo_id")
     private Photo photo;
 

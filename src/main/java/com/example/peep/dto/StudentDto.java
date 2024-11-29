@@ -10,8 +10,8 @@ public record StudentDto(
         String userPassword,
         String name,
         SchoolDto schoolDto,
-        Coin coin,
-        Photo photo,
+        CoinDto coinDto,
+        PhotoDto photoDto,
         int grade,
         int myClass,
         String tel
@@ -23,14 +23,28 @@ public record StudentDto(
     public static StudentDto from(Student student) {
         return new StudentDto(
                 student.getUserId(),
-                student.getUserPassword(),
+                null,
                 student.getName(),
                 SchoolDto.from(student.getSchool()),
-                null,
-                null,
+                CoinDto.from(student.getCoin()),
+                PhotoDto.from(student.getPhoto()),
                 student.getGrade(),
                 student.getMyClass(),
                 student.getTel()
+        );
+    }
+
+    public Student toEntity() {
+        return Student.of(
+                userId,
+                userPassword,
+                name,
+                schoolDto.toEntity(),
+                coinDto.toEntity(),
+                photoDto.toEntity(),
+                grade,
+                myClass,
+                tel
         );
     }
 
