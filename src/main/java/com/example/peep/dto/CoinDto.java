@@ -9,8 +9,11 @@ public record CoinDto(
         return new CoinDto(myCoin);
     }
 
-    public CoinDto from(Coin coin) {
+    public static CoinDto from(Coin coin) {
         return CoinDto.of(coin.getMyCoin());
     }
 
+    public Coin toEntity() {
+        return Coin.of(myCoin);
+    }
 }

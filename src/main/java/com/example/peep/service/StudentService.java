@@ -23,9 +23,7 @@ public class StudentService {
 
     public void newStudent(StudentDto studentDto) {
 
-        Long schoolId = studentDto.schoolDto().id();
-
-        School school = schoolRepository.getReferenceById(schoolId);
+        School school = schoolRepository.getReferenceById(studentDto.schoolDto().id());
         Coin coin = Coin.of(0);
         Photo photo = Photo.of(null);
         Student student = studentDto.toEntity(school, coin, photo);
@@ -38,10 +36,28 @@ public class StudentService {
         studentRepository.save(student);
     }
 
-    public String getStudent(String userId) {
-        Student student = studentRepository.findById(1L).orElse(null);
-        return student.getUserId();
+    public StudentDto getStudent(String userId) {
+        Student student = studentRepository.findByUserId(userId).orElseThrow();
+        return StudentDto.from(student);
     }
 
 
+    public void modifyStudent(StudentDto studentDto) {
+        Student student = studentRepository.findByUserId(studentDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+        Photo photo = photoRepository.findById(student.getPhoto().getId()).orElseThrow();
+        School school = schoolRepository.findById(studentDto.schoolDto().id()).orElseThrow();
+
+        photo.setPhotoUrl(studentDto.photoDto().photoUrl());
+
+        student.setUserId(studentDto.userId());
+        student.setUserPassword(studentDto.userPassword());
+        student.setName(studentDto.name());
+        student.setSchool(school);
+        student.setPhoto(photo);
+        student.setGrade(studentDto.grade());
+        student.setMyClass(studentDto.myClass());
+        student.setTel(studentDto.tel());
+
+        studentRepository.save(student);
+    }
 }
