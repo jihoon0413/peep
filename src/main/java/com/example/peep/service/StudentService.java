@@ -23,9 +23,7 @@ public class StudentService {
 
     public void newStudent(StudentDto studentDto) {
 
-        Long schoolId = studentDto.schoolDto().id();
-
-        School school = schoolRepository.getReferenceById(schoolId);
+        School school = schoolRepository.getReferenceById(studentDto.schoolDto().id());
         Coin coin = Coin.of(0);
         Photo photo = Photo.of(null);
         Student student = studentDto.toEntity(school, coin, photo);
