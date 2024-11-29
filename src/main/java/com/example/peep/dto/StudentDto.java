@@ -20,6 +20,10 @@ public record StudentDto(
         return new StudentDto(userId, userPassword, name, schoolDto, null, null, grade, myClass, tel);
     }
 
+    public static StudentDto of(String userId, String userPassword, String name, SchoolDto schoolDto, CoinDto coindto, PhotoDto photoDto, int grade, int myClass, String tel) {
+        return new StudentDto(userId, userPassword, name, schoolDto, coindto, photoDto, grade, myClass, tel);
+    }
+
     public static StudentDto from(Student student) {
         return new StudentDto(
                 student.getUserId(),
