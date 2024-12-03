@@ -4,13 +4,10 @@ import com.example.peep.dto.JwtTokenDto;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.requestDto.VerifyCodeRequestDto;
 import com.example.peep.service.AuthService;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/auth")

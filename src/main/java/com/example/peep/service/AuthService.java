@@ -11,21 +11,16 @@ import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.requestDto.VerifyCodeRequestDto;
 import com.example.peep.repository.LoginRecordRepository;
 import com.example.peep.repository.RefreshTokenRepository;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
