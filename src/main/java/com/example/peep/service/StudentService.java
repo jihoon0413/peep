@@ -2,6 +2,7 @@ package com.example.peep.service;
 
 import com.example.peep.domain.*;
 import com.example.peep.dto.StudentDto;
+import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +37,9 @@ public class StudentService {
         studentRepository.save(student);
     }
 
-    public StudentDto getStudent(String userId) {
+    public StudentResponse getStudent(String userId) {
         Student student = studentRepository.findByUserId(userId).orElseThrow();
-        return StudentDto.from(student);
+        return StudentResponse.from(student);
     }
 
 

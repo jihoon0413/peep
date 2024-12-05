@@ -132,6 +132,16 @@ public class JwtTokenProvider {
         return false;
     }
 
+    public String getUserId(String token) {
+
+        String bearerToken = token.substring(7);
+        Claims claims = parseClaims(bearerToken);
+
+        return claims.getSubject();
+
+//        return claims.getId();
+    }
+
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parser()

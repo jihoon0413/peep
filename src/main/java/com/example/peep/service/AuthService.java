@@ -8,7 +8,7 @@ import com.example.peep.domain.RefreshToken;
 import com.example.peep.dto.Event;
 import com.example.peep.dto.JwtTokenDto;
 import com.example.peep.dto.StudentDto;
-import com.example.peep.dto.requestDto.VerifyCodeRequestDto;
+import com.example.peep.dto.request.VerifyCodeRequestDto;
 import com.example.peep.repository.LoginRecordRepository;
 import com.example.peep.repository.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;

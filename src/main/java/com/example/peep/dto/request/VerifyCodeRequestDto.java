@@ -1,4 +1,4 @@
-package com.example.peep.dto.requestDto;
+package com.example.peep.dto.request;
 
 public record VerifyCodeRequestDto(
         String phoneNumber,
