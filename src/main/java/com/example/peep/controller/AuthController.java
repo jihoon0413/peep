@@ -2,7 +2,7 @@ package com.example.peep.controller;
 
 import com.example.peep.dto.JwtTokenDto;
 import com.example.peep.dto.StudentDto;
-import com.example.peep.dto.requestDto.VerifyCodeRequestDto;
+import com.example.peep.dto.request.VerifyCodeRequestDto;
 import com.example.peep.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

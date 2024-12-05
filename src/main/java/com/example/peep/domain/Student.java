@@ -5,6 +5,9 @@ import com.example.peep.domain.mapping_table.StudentCommunityQuestion;
 import com.example.peep.domain.mapping_table.StudentHashtag;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -12,6 +15,8 @@ import java.util.Set;
 
 @Getter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE student SET is_deleted = true WHERE id = ?")
+//@SQLRestriction("is_deleted = false")
 @Table(indexes = {
         @Index(columnList = "userId")
 })
@@ -49,11 +54,11 @@ public class Student extends AuditingFields {
     private Set<StudentHashtag> hashtags = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "following_id")
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Follow> followers;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "follower_id")
+    @OneToMany(mappedBy = "following", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Follow> following;
 
     @ToString.Exclude
@@ -98,3 +103,4 @@ public class Student extends AuditingFields {
         return Objects.hashCode(id);
     }
 }
+
