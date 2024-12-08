@@ -3,14 +3,14 @@ package com.example.peep.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @NoArgsConstructor
 @Table(indexes = {
         @Index(columnList = "follower"),
         @Index(columnList = "following"),
 })
-@SQLDelete(sql = "UPDATE follow SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 @Getter
 @Entity
 public class Follow extends AuditingFields{
@@ -19,12 +19,12 @@ public class Follow extends AuditingFields{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "follower_id")
+    @ManyToOne
+    @JoinColumn(name = "follower_id", nullable = false)
     private Student follower;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "following_id")
+    @ManyToOne
+    @JoinColumn(name = "following_id", nullable = false)
     private Student following;
 
     private Follow(Student follower, Student following){

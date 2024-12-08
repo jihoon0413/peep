@@ -1,22 +1,15 @@
 package com.example.peep.domain;
 
-import com.example.peep.domain.mapping_table.StudentCommunity;
-import com.example.peep.domain.mapping_table.StudentCommunityQuestion;
-import com.example.peep.domain.mapping_table.StudentHashtag;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.Where;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE student SET is_deleted = true WHERE id = ?")
-//@SQLRestriction("is_deleted = false")
+@SQLRestriction("is_deleted = false")
 @Table(indexes = {
         @Index(columnList = "userId")
 })
@@ -36,22 +29,23 @@ public class Student extends AuditingFields {
     @JoinColumn(name = "school_id")
     private School school;
 
-    @OneToOne
-    @JoinColumn(name = "coin_id")
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "coin_id", referencedColumnName = "id")
     private Coin coin;
 
-    @OneToOne(cascade = CascadeType.ALL)
     @Setter
-    @JoinColumn(name = "photo_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "photo_id", referencedColumnName = "id")
     private Photo photo;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "student")
-    private Set<StudentCommunity> communities = new HashSet<>();
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "student")
-    private Set<StudentHashtag> hashtags = new HashSet<>();
+//    @ToString.Exclude
+//    @OneToMany(mappedBy = "student")
+//    private Set<StudentCommunity> communities = new HashSet<>();
+//
+//    @ToString.Exclude
+//    @OneToMany(mappedBy = "student")
+//    private Set<StudentHashtag> hashtags = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -61,13 +55,13 @@ public class Student extends AuditingFields {
     @OneToMany(mappedBy = "following", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Follow> following;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "writer_id")
-    private Set<StudentCommunityQuestion> writer;
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "chosen_id")
-    private Set<StudentCommunityQuestion> chosen;
+//    @ToString.Exclude
+//    @OneToMany(mappedBy = "writer_id")
+//    private Set<StudentCommunityQuestion> writer;
+//
+//    @ToString.Exclude
+//    @OneToMany(mappedBy = "chosen_id")
+//    private Set<StudentCommunityQuestion> chosen;
 
     @Setter @Column private int grade;
     @Setter @Column private int myClass;
