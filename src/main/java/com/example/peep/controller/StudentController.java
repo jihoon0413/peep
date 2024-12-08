@@ -24,8 +24,8 @@ public class StudentController {
     }
 
     @PostMapping("/modify")
-    public void modifyStudent(@RequestBody StudentDto studentDto) {
-        studentService.modifyStudent(studentDto);
+    public void modifyStudent(@RequestHeader("Authorization") String accessToken, @RequestBody StudentDto studentDto) {
+        studentService.modifyStudent(accessToken, studentDto);
     }
 
     @GetMapping("/delete")
