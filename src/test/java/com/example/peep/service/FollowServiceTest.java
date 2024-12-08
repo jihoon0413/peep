@@ -1,11 +1,7 @@
 package com.example.peep.service;
 
 import com.example.peep.config.jwt.JwtTokenProvider;
-import com.example.peep.domain.Follow;
-import com.example.peep.domain.Photo;
-import com.example.peep.domain.School;
-import com.example.peep.domain.Student;
-import com.example.peep.dto.StudentDto;
+import com.example.peep.domain.*;
 import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.repository.FollowRepository;
 import com.example.peep.repository.StudentRepository;
@@ -61,13 +57,18 @@ class FollowServiceTest {
 
         //Given
         String userId = "minji";
+        Student std1 = Student.of("jihoon", "1234", "지훈", null, null , null, 3, 1, "01012345567");
+        Student std2 = Student.of("minji", "1234", "민지", null, null , null, 3, 2, "01012345567");
+        Follow follow = Follow.of(std1, std2);
         given(jwtTokenProvider.getUserId("token")).willReturn("jihoon");
+        given(followRepository.findByFollowerUserIdAndFollowingUserId("jihoon", userId)).willReturn(Optional.of(follow));
 
         //When
         followService.unFollow("token", userId);
 
         //Then
-        then(followRepository).should().deleteByFollowerUserIdAndFollowingUserId("jihoon", userId);
+        ArgumentCaptor<Follow> followCaptor = ArgumentCaptor.forClass(Follow.class);
+        then(followRepository).should().save(followCaptor.capture());
     }
 
     @DisplayName("getFollowingList - 팔로잉 목록 조회")

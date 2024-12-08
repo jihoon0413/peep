@@ -1,17 +1,12 @@
 package com.example.peep.service;
 
-import com.example.peep.domain.Coin;
-import com.example.peep.domain.Photo;
-import com.example.peep.domain.School;
-import com.example.peep.domain.Student;
+import com.example.peep.config.jwt.JwtTokenProvider;
+import com.example.peep.domain.*;
 import com.example.peep.dto.CoinDto;
 import com.example.peep.dto.PhotoDto;
 import com.example.peep.dto.SchoolDto;
 import com.example.peep.dto.StudentDto;
-import com.example.peep.repository.CoinRepository;
-import com.example.peep.repository.PhotoRepository;
-import com.example.peep.repository.SchoolRepository;
-import com.example.peep.repository.StudentRepository;
+import com.example.peep.repository.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -31,7 +28,8 @@ class StudentServiceTest {
 
     @Mock private StudentRepository studentRepository;
     @Mock private SchoolRepository schoolRepository;
-    @Mock private CoinRepository coinRepository;
+    @Mock private JwtTokenProvider jwtTokenProvider;
+    @Mock private FollowRepository followRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private PhotoRepository photoRepository;
 
@@ -95,6 +93,46 @@ class StudentServiceTest {
         assertThat(oldStudent.getPhoto().getPhotoUrl()).isEqualTo("photo");
         assertThat(oldStudent.getGrade()).isEqualTo(3);
         assertThat(oldStudent.getMyClass()).isEqualTo(3);
+    }
+
+    @DisplayName("delete - 계정 탈퇴")
+    @Test
+    void givenAccessToken_whenDeleteStudent_thenDelete() {
+
+        //Given
+        String token = "token";
+        Coin coin = Coin.of(0);
+        Photo photo = Photo.of("dummy");
+        Student std1 = Student.of("jihoon", "1234", "지훈", null, coin , photo, 3, 1, "01012345567");
+        Student std2 = Student.of("minji", "1234", "민지", null, coin , photo, 3, 2, "01012345567");
+        Student std3 = Student.of("inseo", "1234", "인서", null, coin , photo, 3, 3, "01012345567");
+
+        Follow follow1 = Follow.of(std1,std2);
+        Follow follow2 = Follow.of(std1,std3);
+        Follow follow3 = Follow.of(std2,std1);
+        Follow follow4 = Follow.of(std3,std1);
+
+        List<Follow> followings = new ArrayList<>();
+        List<Follow> followers = new ArrayList<>();
+
+        followings.add(follow1);
+        followings.add(follow2);
+        followers.add(follow3);
+        followers.add(follow4);
+
+        given(jwtTokenProvider.getUserId(token)).willReturn("jihoon");
+        given(studentRepository.findByUserId("jihoon")).willReturn(Optional.of(std1));
+        given(followRepository.findAllByFollowingUserId("jihoon")).willReturn(followings);
+        given(followRepository.findAllByFollowerUserId("jihoon")).willReturn(followers);
+        //When
+        studentService.deleteStudent(token);
+
+        //Then
+        ArgumentCaptor<Student> studentArgument = ArgumentCaptor.forClass(Student.class);
+        ArgumentCaptor<Follow> followArgument = ArgumentCaptor.forClass(Follow.class);
+        then(studentRepository).should().save(studentArgument.capture());
+        then(followRepository).should(times(4)).save(followArgument.capture());
+
     }
 
 }
