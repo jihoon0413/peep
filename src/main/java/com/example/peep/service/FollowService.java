@@ -48,7 +48,9 @@ public class FollowService {
 
         String myId = jwtTokenProvider.getUserId(token);
 
-        followRepository.deleteByFollowerUserIdAndFollowingUserId(myId, userId);
+        Follow follow = followRepository.findByFollowerUserIdAndFollowingUserId(myId, userId).orElseThrow();
+        follow.setIsDeleted(true);
+        followRepository.save(follow);
     }
 
     public List<StudentResponse> getFollowingList(String userId) {

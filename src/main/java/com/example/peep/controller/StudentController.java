@@ -27,4 +27,9 @@ public class StudentController {
     public void modifyStudent(@RequestBody StudentDto studentDto) {
         studentService.modifyStudent(studentDto);
     }
+
+    @GetMapping("/delete")
+    public void deleteStudent(@RequestHeader("Authorization") String accessToken) {
+        studentService.deleteStudent(accessToken);
+    }
 }

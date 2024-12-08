@@ -1,5 +1,6 @@
 package com.example.peep.service;
 
+import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.domain.*;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.response.StudentResponse;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ public class StudentService {
     private final SchoolRepository schoolRepository;
     private final CoinRepository coinRepository;
     private final PhotoRepository photoRepository;
+    private final FollowRepository followRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
     public void newStudent(StudentDto studentDto) {
@@ -36,12 +40,6 @@ public class StudentService {
         photoRepository.save(photo);
         studentRepository.save(student);
     }
-
-    public StudentResponse getStudent(String userId) {
-        Student student = studentRepository.findByUserId(userId).orElseThrow();
-        return StudentResponse.from(student);
-    }
-
 
     public void modifyStudent(StudentDto studentDto) {
         Student student = studentRepository.findByUserId(studentDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
@@ -60,5 +58,35 @@ public class StudentService {
         student.setTel(studentDto.tel());
 
         studentRepository.save(student);
+    }
+
+    public void deleteStudent(String token) {
+
+        String myId = jwtTokenProvider.getUserId(token);
+
+        Student student = studentRepository.findByUserId(myId).orElseThrow();
+
+        followRepository.findAllByFollowerUserId(student.getUserId())
+                .forEach(follow -> {
+                    follow.setIsDeleted(true);
+                    followRepository.save(follow);
+        });
+
+        followRepository.findAllByFollowingUserId(student.getUserId())
+                .forEach(follow -> {
+                    follow.setIsDeleted(true);
+                    followRepository.save(follow);
+        });
+
+        student.setIsDeleted(true);
+        student.getCoin().setIsDeleted(true);
+        student.getPhoto().setIsDeleted(true);
+
+        studentRepository.save(student);
+    }
+
+    public StudentResponse getStudent(String userId) {
+        Student student = studentRepository.findByUserId(userId).orElseThrow();
+        return StudentResponse.from(student);
     }
 }
