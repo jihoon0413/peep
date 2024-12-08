@@ -41,15 +41,17 @@ public class StudentService {
         studentRepository.save(student);
     }
 
-    public void modifyStudent(StudentDto studentDto) {
-        Student student = studentRepository.findByUserId(studentDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
+    public void modifyStudent(String accessToken, StudentDto studentDto) {
+        String myId = jwtTokenProvider.getUserId(accessToken);
+        Student student = studentRepository.findByUserId(myId).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
         Photo photo = photoRepository.findById(student.getPhoto().getId()).orElseThrow();
         School school = schoolRepository.findById(studentDto.schoolDto().id()).orElseThrow();
+        String hashedPassword = passwordEncoder.encode(studentDto.userPassword());
 
         photo.setPhotoUrl(studentDto.photoDto().photoUrl());
 
         student.setUserId(studentDto.userId());
-        student.setUserPassword(studentDto.userPassword());
+        student.setUserPassword(hashedPassword);
         student.setName(studentDto.name());
         student.setSchool(school);
         student.setPhoto(photo);
