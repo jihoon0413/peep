@@ -22,11 +22,11 @@ insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (3,
 insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (4, 'http://dummyimage.com/154x100.png/cc0000/ffffff', '2024-05-13 16:07:57', '2023-11-19 00:24:54', false);
 insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (5, 'http://dummyimage.com/103x100.png/ff4444/ffffff', '2024-03-28 01:20:12', '2024-06-09 19:36:46', true);
 
---insert into hashtag (id, content) values (1, 'Goldenrod');
---insert into hashtag (id, content) values (2, 'Purple');
---insert into hashtag (id, content) values (3, 'Khaki');
---insert into hashtag (id, content) values (4, 'Aquamarine');
---insert into hashtag (id, content) values (5, 'Turquoise');
+insert into hashtag (id, content, type) values (1, 'shy', 'CHARACTER');
+insert into hashtag (id, content, type) values (2, 'energy', 'CHARACTER');
+insert into hashtag (id, content, type) values (3, 'tennis', 'HOBBY');
+insert into hashtag (id, content, type) values (4, 'lazy', 'CHARACTER');
+insert into hashtag (id, content, type) values (5, 'soccer', 'HOBBY');
 
 insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (1, 'jihoon', '$2a$10$pLwVE3EJmIPkRqvVLVbRKe0RRSwbC1p2tVdZrDhv6S65y9joeOYxC', '신지훈', 1, 1, 1, '181-445-5294', 1, 1, '2024-05-18 14:19:00', '2024-06-29 16:29:12', false);
 insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (2, 'minji', '$2a$10$pLwVE3EJmIPkRqvVLVbRKe0RRSwbC1p2tVdZrDhv6S65y9joeOYxC', '서민지', 1, 2, 2, '397-992-0977', 1, 1, '2024-03-15 01:07:48', '2024-08-14 11:15:17', false);
@@ -51,12 +51,12 @@ insert into follow (id, follower_id, following_id, created_at, is_deleted) value
 --insert into student_community (id, student_id, community_id, created_at, updated_at, is_deleted) values (3, 3, 1, '2024-01-02 18:39:41', '2023-11-16 05:55:36', false);
 --insert into student_community (id, student_id, community_id, created_at, updated_at, is_deleted) values (4, 4, 1, '2024-03-30 07:03:24', '2024-01-22 04:23:01', false);
 --insert into student_community (id, student_id, community_id, created_at, updated_at, is_deleted) values (5, 5, 1, '2024-03-26 01:58:49', '2024-04-21 19:53:05', true);
---
---insert into student_hashtag (id, student_id, hashtag_id, created_at) values (1, 1, 5, '2024-05-17 12:34:10');
---insert into student_hashtag (id, student_id, hashtag_id, created_at) values (2, 1, 4, '2023-12-16 21:29:58');
---insert into student_hashtag (id, student_id, hashtag_id, created_at) values (3, 1, 2, '2024-10-07 19:09:39');
---insert into student_hashtag (id, student_id, hashtag_id, created_at) values (4, 2, 3, '2024-04-24 07:14:50');
---insert into student_hashtag (id, student_id, hashtag_id, created_at) values (5, 2, 5, '2024-06-28 18:18:43');
+
+insert into student_hashtag (id, student_id, hashtag_id, created_at, is_deleted) values (1, 1, 5, '2024-05-17 12:34:10', false);
+insert into student_hashtag (id, student_id, hashtag_id, created_at, is_deleted) values (2, 1, 4, '2023-12-16 21:29:58', false);
+insert into student_hashtag (id, student_id, hashtag_id, created_at, is_deleted) values (3, 1, 1, '2024-10-07 19:09:39', false);
+insert into student_hashtag (id, student_id, hashtag_id, created_at, is_deleted) values (4, 2, 3, '2024-04-24 07:14:50', false);
+insert into student_hashtag (id, student_id, hashtag_id, created_at, is_deleted) values (5, 2, 5, '2024-06-28 18:18:43', false);
 
 --insert into community_question (id, community_id, question_id, created_at, updated_at) values (1, 1, 3, '2024-09-27 07:23:38', null);
 --insert into community_question (id, community_id, question_id, created_at, updated_at) values (2, 1, 2, '2024-03-26 20:42:29', null);

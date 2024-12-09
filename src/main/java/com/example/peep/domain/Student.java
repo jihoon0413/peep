@@ -3,17 +3,16 @@ package com.example.peep.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
-
 import java.util.Objects;
 import java.util.Set;
 
+@Entity
 @Getter
 @NoArgsConstructor
 @SQLRestriction("is_deleted = false")
 @Table(indexes = {
         @Index(columnList = "userId")
 })
-@Entity
 public class Student extends AuditingFields {
 
     @Id

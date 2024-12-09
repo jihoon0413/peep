@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/verifyCode").permitAll()
                         .requestMatchers("/follow/getFollowingList").permitAll()
                         .requestMatchers("/follow/getFollowerList").permitAll()
+                        .requestMatchers("/hashtag/getHashList").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
