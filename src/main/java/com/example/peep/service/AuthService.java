@@ -5,7 +5,7 @@ import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.details.SmsUtil;
 import com.example.peep.domain.LoginRecord;
 import com.example.peep.domain.RefreshToken;
-import com.example.peep.dto.Event;
+import com.example.peep.enumType.Event;
 import com.example.peep.dto.JwtTokenDto;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.request.VerifyCodeRequestDto;
