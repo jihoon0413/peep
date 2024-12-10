@@ -8,10 +8,14 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 spring:
   datasource:
-    url: ${LOCAL_DB_URL}
-    username: ${LOCAL_DB_USERNAME}
-    password: ${LOCAL_DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: ${LOCAL_DB_URL}
+#    username: ${LOCAL_DB_USERNAME}
+#    password: ${LOCAL_DB_PASSWORD}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mariadb://svc.sel5.cloudtype.app:31032/peepdb
+      username: root
+      password: ${LOCAL_DB_PASSWORD}
+      driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     defer-datasource-initialization: true
     hibernate.ddl-auto: create
