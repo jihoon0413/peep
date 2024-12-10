@@ -20,7 +20,7 @@ insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (1,
 insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (2, 'http://dummyimage.com/116x100.png/5fa2dd/ffffff', '2024-07-25 03:06:50', '2024-02-08 03:06:17', false);
 insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (3, 'http://dummyimage.com/156x100.png/ff4444/ffffff', '2024-02-25 23:55:53', null, false);
 insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (4, 'http://dummyimage.com/154x100.png/cc0000/ffffff', '2024-05-13 16:07:57', '2023-11-19 00:24:54', false);
-insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (5, 'http://dummyimage.com/103x100.png/ff4444/ffffff', '2024-03-28 01:20:12', '2024-06-09 19:36:46', true);
+insert into photo (id, photo_url, created_at, updated_at, is_deleted) values (5, 'http://dummyimage.com/103x100.png/ff4444/ffffff', '2024-03-28 01:20:12', '2024-06-09 19:36:46', false);
 
 insert into hashtag (id, content, type) values (1, 'shy', 'CHARACTER');
 insert into hashtag (id, content, type) values (2, 'energy', 'CHARACTER');
