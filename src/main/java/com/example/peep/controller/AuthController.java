@@ -25,8 +25,7 @@ public class AuthController {
     @PostMapping("/refresh")
     public JwtTokenDto refreshToken(@RequestHeader("Authorization") String accessToken,
                                     @RequestHeader("Device-Id") String deviceId,
-                                    @RequestBody JwtTokenDto jwtTokenDto,
-                                    @RequestParam("userId") String userId) {
+                                    @RequestBody JwtTokenDto jwtTokenDto) {
 
         String oldAccess = accessToken.substring(7);
         return authService.refreshToken(deviceId, jwtTokenDto, oldAccess);
