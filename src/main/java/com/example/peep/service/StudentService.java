@@ -2,6 +2,8 @@ package com.example.peep.service;
 
 import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.domain.*;
+import com.example.peep.domain.mapping.StudentHashtag;
+import com.example.peep.dto.HashtagDto;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.repository.*;
@@ -23,6 +25,8 @@ public class StudentService {
     private final CoinRepository coinRepository;
     private final PhotoRepository photoRepository;
     private final FollowRepository followRepository;
+    private final StudentHashtagRepository studentHashtagRepository;
+    private final HashtagRepository hashtagRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
@@ -30,7 +34,7 @@ public class StudentService {
 
         School school = schoolRepository.getReferenceById(studentDto.schoolDto().id());
         Coin coin = Coin.of(0);
-        Photo photo = Photo.of(null);
+        Photo photo = Photo.of(studentDto.photoDto().photoUrl());
         Student student = studentDto.toEntity(school, coin, photo);
 
         String hashedPassword = passwordEncoder.encode(student.getUserPassword());
@@ -39,6 +43,16 @@ public class StudentService {
         coinRepository.save(coin);
         photoRepository.save(photo);
         studentRepository.save(student);
+
+        if(studentDto.hashtagDtos() != null) {
+            for (HashtagDto hashtagDto : studentDto.hashtagDtos()) {
+                StudentHashtag studentHashtag = studentHashtagRepository.findByStudentUserIdAndHashtagId(studentDto.userId(), hashtagDto.id()).orElse(null);
+                if (studentHashtag == null) {
+                    Hashtag hashtag = hashtagRepository.findById(hashtagDto.id()).orElseThrow();
+                    studentHashtagRepository.save(StudentHashtag.of(student, hashtag));
+                }
+            }
+        }
     }
 
     public void modifyStudent(String accessToken, StudentDto studentDto) {

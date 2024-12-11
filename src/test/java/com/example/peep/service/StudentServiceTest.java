@@ -28,6 +28,7 @@ class StudentServiceTest {
 
     @Mock private StudentRepository studentRepository;
     @Mock private SchoolRepository schoolRepository;
+    @Mock private CoinRepository coinRepository;
     @Mock private JwtTokenProvider jwtTokenProvider;
     @Mock private FollowRepository followRepository;
     @Mock private PasswordEncoder passwordEncoder;
@@ -46,18 +47,21 @@ class StudentServiceTest {
                 "광주광역시교육청",
                 "광주고등학교"
         );
+        PhotoDto photoDto = PhotoDto.of("dummy");
+        CoinDto coinDto = CoinDto.of(0);
         StudentDto studentDto = StudentDto.of(
                 "wlgns",
                 "1234",
                 "지훈",
                 schoolDto,
+                coinDto,
+                photoDto,
                 3,
                 1,
                 "010-1234-1234"
         );
         given(schoolRepository.getReferenceById(schoolDto.id())).willReturn(School.of("광주광역시교육청","광주고등학교"));
         given(passwordEncoder.encode("1234")).willReturn("$2a$10$9mAxfCvr.rzFJMTm/xBBse2/o42tV9dCwxQw4XAjNOAQXL9tIDjKC");
-
         //When
         studentService.newStudent(studentDto);
 
@@ -83,8 +87,9 @@ class StudentServiceTest {
         given(studentRepository.findByUserId("jihoon")).willReturn(Optional.of(oldStudent));
         given(schoolRepository.findById(newSchoolDto.id())).willReturn(Optional.of(newSchoolDto.toEntity()));
         given(photoRepository.findById(oldPhoto.getId())).willReturn(Optional.of(oldPhoto));
+        given(jwtTokenProvider.getUserId("token")).willReturn("jihoon");
         //When
-        studentService.modifyStudent(updatedDto);
+        studentService.modifyStudent("token", updatedDto);
 
         //Then
         then(studentRepository).should(times(1)).save(oldStudent);

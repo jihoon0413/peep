@@ -1,8 +1,11 @@
 package com.example.peep.domain;
 
+import com.example.peep.domain.mapping.StudentHashtag;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -41,10 +44,10 @@ public class Student extends AuditingFields {
 //    @ToString.Exclude
 //    @OneToMany(mappedBy = "student")
 //    private Set<StudentCommunity> communities = new HashSet<>();
-//
-//    @ToString.Exclude
-//    @OneToMany(mappedBy = "student")
-//    private Set<StudentHashtag> hashtags = new HashSet<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "student")
+    private Set<StudentHashtag> hashtags = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
