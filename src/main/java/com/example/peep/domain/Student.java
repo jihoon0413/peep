@@ -1,5 +1,6 @@
 package com.example.peep.domain;
 
+import com.example.peep.domain.mapping.StudentCommunity;
 import com.example.peep.domain.mapping.StudentHashtag;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,9 +42,9 @@ public class Student extends AuditingFields {
     @JoinColumn(name = "photo_id", referencedColumnName = "id")
     private Photo photo;
 
-//    @ToString.Exclude
-//    @OneToMany(mappedBy = "student")
-//    private Set<StudentCommunity> communities = new HashSet<>();
+    @ToString.Exclude
+    @OneToMany(mappedBy = "student")
+    private Set<StudentCommunity> communities = new HashSet<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "student")

@@ -2,6 +2,7 @@ package com.example.peep.service;
 
 import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.domain.*;
+import com.example.peep.domain.mapping.StudentCommunity;
 import com.example.peep.domain.mapping.StudentHashtag;
 import com.example.peep.dto.HashtagDto;
 import com.example.peep.dto.StudentDto;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +26,8 @@ public class StudentService {
     private final PhotoRepository photoRepository;
     private final FollowRepository followRepository;
     private final StudentHashtagRepository studentHashtagRepository;
+    private final StudentCommunityRepository studentCommunityRepository;
+    private final CommunityRepository communityRepository;
     private final HashtagRepository hashtagRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -53,6 +55,16 @@ public class StudentService {
                 }
             }
         }
+
+        Community community = communityRepository.findBySchoolIdAndGradeAndMyClass(school.getId(), studentDto.grade(), studentDto.myClass()).orElse(null);
+
+        if(community == null) {
+            community = Community.of(school, studentDto.grade(), studentDto.myClass());
+            communityRepository.save(community);
+        }
+
+        StudentCommunity studentCommunity = StudentCommunity.of(student, community);
+        studentCommunityRepository.save(studentCommunity);
     }
 
     public void modifyStudent(String accessToken, StudentDto studentDto) {
