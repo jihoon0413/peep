@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -86,6 +88,14 @@ public class StudentService {
         student.setTel(studentDto.tel());
 
         studentRepository.save(student);
+    }
+
+    public List<StudentResponse> getFourStudents(String token, Long communityId) {
+        String myId = jwtTokenProvider.getUserId(token);
+
+        return studentRepository.findRandomFourStudents(communityId, myId)
+                .stream().map(StudentResponse::from)
+                .toList();
     }
 
     public void deleteStudent(String token) {
