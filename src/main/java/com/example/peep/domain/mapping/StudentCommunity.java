@@ -4,9 +4,11 @@ import com.example.peep.domain.AuditingFields;
 import com.example.peep.domain.Community;
 import com.example.peep.domain.Student;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class StudentCommunity extends AuditingFields {
 

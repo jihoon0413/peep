@@ -3,6 +3,7 @@ package com.example.peep.domain;
 import com.example.peep.domain.mapping.CommunityQuestion;
 import com.example.peep.domain.mapping.StudentCommunity;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class Community extends AuditingFields{
 

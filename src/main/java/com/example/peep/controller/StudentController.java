@@ -6,6 +6,8 @@ import com.example.peep.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/students")
 @RestController
@@ -31,5 +33,11 @@ public class StudentController {
     @GetMapping("/delete")
     public void deleteStudent(@RequestHeader("Authorization") String accessToken) {
         studentService.deleteStudent(accessToken);
+    }
+
+    @GetMapping("/getFourStudents")
+    public List<StudentResponse> getFourStudents(@RequestHeader("Authorization") String token,
+                                                 @RequestParam("communityId") Long communityId) {
+        return studentService.getFourStudents(token, communityId);
     }
 }

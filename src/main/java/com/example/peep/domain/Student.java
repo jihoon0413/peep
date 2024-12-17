@@ -1,6 +1,7 @@
 package com.example.peep.domain;
 
 import com.example.peep.domain.mapping.StudentCommunity;
+import com.example.peep.domain.mapping.StudentCommunityQuestion;
 import com.example.peep.domain.mapping.StudentHashtag;
 import jakarta.persistence.*;
 import lombok.*;
@@ -58,13 +59,13 @@ public class Student extends AuditingFields {
     @OneToMany(mappedBy = "following", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Follow> following;
 
-//    @ToString.Exclude
-//    @OneToMany(mappedBy = "writer_id")
-//    private Set<StudentCommunityQuestion> writer;
-//
-//    @ToString.Exclude
-//    @OneToMany(mappedBy = "chosen_id")
-//    private Set<StudentCommunityQuestion> chosen;
+    @ToString.Exclude
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<StudentCommunityQuestion> writer;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "chosen", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<StudentCommunityQuestion> chosen;
 
     @Setter @Column private int grade;
     @Setter @Column private int myClass;
