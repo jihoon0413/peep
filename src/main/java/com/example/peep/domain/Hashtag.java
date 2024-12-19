@@ -17,4 +17,14 @@ public class Hashtag {
 
     @Enumerated(value = EnumType.STRING)
     @Setter @Column private HashtagType type;
+
+    private Hashtag(String content, HashtagType type) {
+        this.content = content;
+        this.type = type;
+    }
+
+    public static Hashtag of(String content, HashtagType type) {
+        return new Hashtag(content, type);
+    }
+
 }

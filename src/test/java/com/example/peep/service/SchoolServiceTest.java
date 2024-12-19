@@ -3,6 +3,7 @@ package com.example.peep.service;
 import com.example.peep.domain.School;
 import com.example.peep.dto.SchoolDto;
 import com.example.peep.repository.SchoolRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,9 +24,9 @@ class SchoolServiceTest {
     @InjectMocks
     private SchoolService schoolService;
 
-
+    @DisplayName("getSchoolList - 학교리스트 불러오기")
     @Test
-    void given_when_then() {
+    void given_whenGetSchoolList_thenReturnSchoolDtoList() {
 
         //Given
         List<School> givenList = new ArrayList<>();
