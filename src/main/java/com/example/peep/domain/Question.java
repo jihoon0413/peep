@@ -16,5 +16,12 @@ public class Question extends AuditingFields{
 
     @Setter @Column private String content;
 
+    private Question(String content) {
+        this.content = content;
+    }
+
+    public static Question of(String content) {
+        return new Question(content);
+    }
 
 }
