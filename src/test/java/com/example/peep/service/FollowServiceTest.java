@@ -89,7 +89,7 @@ class FollowServiceTest {
         given(studentRepository.findById(std1.getId())).willReturn(Optional.of(std1));
         given(studentRepository.findById(std2.getId())).willReturn(Optional.of(std2));
         //When
-        List<StudentResponse> studentDtoList = followService.getFollowingList(userId);
+        List<StudentResponse> studentDtoList = followService.getFollowingList(userId).getBody();
         //Then
         assertThat(studentDtoList.size()).isEqualTo(2);
 //        assertThat(studentDtoList.get(0).userId()).isEqualTo("minji");
@@ -115,7 +115,7 @@ class FollowServiceTest {
         given(studentRepository.findById(std1.getId())).willReturn(Optional.of(std1));
         given(studentRepository.findById(std2.getId())).willReturn(Optional.of(std2));
         //When
-        List<StudentResponse> studentDtoList = followService.getFollowerList(userId);
+        List<StudentResponse> studentDtoList = followService.getFollowerList(userId).getBody();
         //Then
         assertThat(studentDtoList.size()).isEqualTo(2);
 //        assertThat(studentDtoList.get(0).userId()).isEqualTo("minji");

@@ -12,6 +12,7 @@ import com.example.peep.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,14 +28,22 @@ public class HashtagService {
     private final StudentHashtagRepository studentHashtagRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public List<HashtagDto> getHashList(HashtagType type) {
+    public ResponseEntity<List<HashtagDto>> getHashList(HashtagType type) {
 
-        return hashtagRepository.findAllByType(type)
+        return ResponseEntity.ok(hashtagRepository.findAllByType(type)
                 .stream().map(HashtagDto::from)
-                .toList();
+                .toList());
     }
 
-    public void setMyHashtag(String token, List<HashtagDto> hashtagDtoList) {
+    public ResponseEntity<List<HashtagDto>> getMyHashtag(String token) {
+        String myId = jwtTokenProvider.getUserId(token);
+
+        return ResponseEntity.ok(studentHashtagRepository.findAllByStudentUserIdOrderByHashtagTypeAscHashtagContentAsc(myId)
+                .stream().map(studentHashtag -> HashtagDto.from(studentHashtag.getHashtag()))
+                .toList());
+    }
+
+    public ResponseEntity<Void> setMyHashtag(String token, List<HashtagDto> hashtagDtoList) {
         String myId = jwtTokenProvider.getUserId(token);
 
         for (HashtagDto hashtagDto : hashtagDtoList) {
@@ -45,22 +54,16 @@ public class HashtagService {
                 studentHashtagRepository.save(StudentHashtag.of(student, hashtag));
             }
         }
+        return ResponseEntity.noContent().build();
     }
 
-    public List<HashtagDto> getMyHashtag(String token) {
-        String myId = jwtTokenProvider.getUserId(token);
-
-        return studentHashtagRepository.findAllByStudentUserIdOrderByHashtagTypeAscHashtagContentAsc(myId)
-                .stream().map(studentHashtag -> HashtagDto.from(studentHashtag.getHashtag()))
-                .toList();
-    }
-
-    public void deleteMyHashtag(String token, List<HashtagDto> hashtagDtoList) {
+    public ResponseEntity<Void> deleteMyHashtag(String token, List<HashtagDto> hashtagDtoList) {
 
         String myId = jwtTokenProvider.getUserId(token);
 
         for (HashtagDto hashtagDto : hashtagDtoList) {
             studentHashtagRepository.deleteByStudentUserIdAndHashtagId(myId, hashtagDto.id());
         }
+        return ResponseEntity.noContent().build();
     }
 }

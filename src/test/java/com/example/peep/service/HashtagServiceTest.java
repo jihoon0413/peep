@@ -47,7 +47,7 @@ class HashtagServiceTest {
         hashtagList.add(hash3);
         given(hashtagRepository.findAllByType(HashtagType.HOBBY)).willReturn(hashtagList);
         //When
-        List<HashtagDto> dtoList = hashtagService.getHashList(HashtagType.HOBBY);
+        List<HashtagDto> dtoList = hashtagService.getHashList(HashtagType.HOBBY).getBody();
         //Then
         assertThat(dtoList.size()).isEqualTo(3);
     }
@@ -99,7 +99,7 @@ class HashtagServiceTest {
         given(jwtTokenProvider.getUserId("token")).willReturn("jihoon");
         given(studentHashtagRepository.findAllByStudentUserIdOrderByHashtagTypeAscHashtagContentAsc("jihoon")).willReturn(list);
         //When
-        List<HashtagDto> result = hashtagService.getMyHashtag("token");
+        List<HashtagDto> result = hashtagService.getMyHashtag("token").getBody();
         //Then
         assertThat(result.size()).isEqualTo(3);
     }

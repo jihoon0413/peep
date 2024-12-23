@@ -36,7 +36,7 @@ class SchoolServiceTest {
         //When
         given(schoolRepository.findAll()).willReturn(givenList);
 
-        List<SchoolDto> schools = schoolService.getSchoolList();
+        List<SchoolDto> schools = schoolService.getSchoolList().getBody();
         //Then
         assertThat(schools.size()).isEqualTo(2);
         then(schoolRepository).should().findAll();

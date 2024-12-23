@@ -17,13 +17,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public JwtTokenDto login(HttpServletRequest request,
+    public ResponseEntity<JwtTokenDto> login(HttpServletRequest request,
                              @RequestBody StudentDto studentDto) {
         return authService.login(request, studentDto);
     }
 
     @PostMapping("/refresh")
-    public JwtTokenDto refreshToken(@RequestHeader("Authorization") String accessToken,
+    public ResponseEntity<JwtTokenDto> refreshToken(@RequestHeader("Authorization") String accessToken,
                                     @RequestHeader("Device-Id") String deviceId,
                                     @RequestBody JwtTokenDto jwtTokenDto) {
 
@@ -32,23 +32,23 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request,
+    public ResponseEntity<String> logout(HttpServletRequest request,
                          @RequestBody JwtTokenDto jwtTokenDto,
                          @RequestHeader("Authorization") String accessToken) {
 
         String oldAccess = accessToken.substring(7);
 
-        authService.logout(request, jwtTokenDto, oldAccess);
-        return "Logout successful";
+        return authService.logout(request, jwtTokenDto, oldAccess);
+
     }
 
     @PostMapping("/sendCode")
-    public ResponseEntity<?> SendSMS(@RequestBody VerifyCodeRequestDto verifyCodeRequestDto){
+    public ResponseEntity<String> SendSMS(@RequestBody VerifyCodeRequestDto verifyCodeRequestDto){
         return authService.sendSms(verifyCodeRequestDto.phoneNumber());
     }
 
     @PostMapping("/verifyCode")
-    public boolean checkVerifyCode(@RequestBody VerifyCodeRequestDto verifyCodeRequestDto){
+    public ResponseEntity<Boolean> checkVerifyCode(@RequestBody VerifyCodeRequestDto verifyCodeRequestDto){
         return authService.checkVerifyCode(verifyCodeRequestDto);
     }
 }

@@ -10,6 +10,7 @@ import com.example.peep.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public void newFollow(String token, String userId) {
+    public ResponseEntity<Void> newFollow(String token, String userId) {
 
         String myId = jwtTokenProvider.getUserId(token);
 
@@ -42,36 +43,39 @@ public class FollowService {
                 throw new IllegalArgumentException("존재하지 않은 계정입니다.");
             }
         }
+        return ResponseEntity.noContent().build();
     }
 
-    public void unFollow(String token, String userId) {
+    public ResponseEntity<Void> unFollow(String token, String userId) {
 
         String myId = jwtTokenProvider.getUserId(token);
 
         Follow follow = followRepository.findByFollowerUserIdAndFollowingUserId(myId, userId).orElseThrow();
         follow.setIsDeleted(true);
         followRepository.save(follow);
+
+        return ResponseEntity.noContent().build();
     }
 
-    public List<StudentResponse> getFollowingList(String userId) {
-        return followRepository.findAllByFollowerUserId(userId)
+    public ResponseEntity<List<StudentResponse>> getFollowingList(String userId) {
+        return ResponseEntity.ok(followRepository.findAllByFollowerUserId(userId)
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollowing().getId())
                         .filter(student -> !student.getIsDeleted())
                         .map(StudentResponse::from)
                         .orElse(null))
                 .filter(Objects::nonNull)
-                .toList();
+                .toList());
     }
 
-    public List<StudentResponse> getFollowerList(String userId) {
-        return followRepository.findAllByFollowingUserId(userId)
+    public ResponseEntity<List<StudentResponse>> getFollowerList(String userId) {
+        return ResponseEntity.ok(followRepository.findAllByFollowingUserId(userId)
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollower().getId())
                         .filter(student -> !student.getIsDeleted())
                         .map(StudentResponse::from)
                         .orElse(null))
                 .filter(Objects::nonNull)
-                .toList();
+                .toList());
     }
 }
