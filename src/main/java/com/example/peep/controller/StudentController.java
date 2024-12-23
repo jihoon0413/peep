@@ -4,6 +4,7 @@ import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +17,27 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public StudentResponse getStudent(@RequestParam("userId") String userId) {
+    public ResponseEntity<StudentResponse> getStudent(@RequestParam("userId") String userId) {
         return studentService.getStudent(userId);
     }
 
     @PostMapping("/new")
-    public void newStudent(@RequestBody StudentDto studentDto) {
-        studentService.newStudent(studentDto);
+    public ResponseEntity<Void> newStudent(@RequestBody StudentDto studentDto) {
+        return studentService.newStudent(studentDto);
     }
 
     @PostMapping("/modify")
-    public void modifyStudent(@RequestHeader("Authorization") String accessToken, @RequestBody StudentDto studentDto) {
-        studentService.modifyStudent(accessToken, studentDto);
+    public ResponseEntity<Void> modifyStudent(@RequestHeader("Authorization") String accessToken, @RequestBody StudentDto studentDto) {
+        return studentService.modifyStudent(accessToken, studentDto);
     }
 
     @GetMapping("/delete")
-    public void deleteStudent(@RequestHeader("Authorization") String accessToken) {
-        studentService.deleteStudent(accessToken);
+    public ResponseEntity<Void> deleteStudent(@RequestHeader("Authorization") String accessToken) {
+        return studentService.deleteStudent(accessToken);
     }
 
     @GetMapping("/getFourStudents")
-    public List<StudentResponse> getFourStudents(@RequestHeader("Authorization") String token,
+    public ResponseEntity<List<StudentResponse>> getFourStudents(@RequestHeader("Authorization") String token,
                                                  @RequestParam("communityId") Long communityId) {
         return studentService.getFourStudents(token, communityId);
     }

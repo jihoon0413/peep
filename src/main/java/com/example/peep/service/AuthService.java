@@ -36,18 +36,19 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SmsUtil smsUtil;
 
-    public JwtTokenDto login(HttpServletRequest request, StudentDto studentDto) {
+    public ResponseEntity<JwtTokenDto> login(HttpServletRequest request, StudentDto studentDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(studentDto.userId(), studentDto.userPassword());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         recordEvent(request, studentDto.userId(), Event.LOG_IN);
 
-        return JwtTokenDto.from(jwtTokenProvider.generateToken(authentication, studentDto.userId(), request.getHeader("Device-Id")));
+        JwtTokenDto jwtTokenDto = JwtTokenDto.from(jwtTokenProvider.generateToken(authentication, studentDto.userId(), request.getHeader("Device-Id")));
 
+        return ResponseEntity.ok(jwtTokenDto);
     }
 
-    public JwtTokenDto refreshToken(String deviceId, JwtTokenDto jwtTokenDto, String oldAccess) {
+    public ResponseEntity<JwtTokenDto> refreshToken(String deviceId, JwtTokenDto jwtTokenDto, String oldAccess) {
 
         RefreshToken refresh = refreshTokenRepository.findByUserIdAndDeviceId(jwtTokenDto.id(), deviceId);
 
@@ -61,24 +62,26 @@ public class AuthService {
             }
         } catch (IllegalArgumentException e) {
             log.info("Invalid token");
-            return null;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         tokenBlacklistService.addToBlacklist(oldAccess);
         JwtToken jwtToken = new JwtToken("Bearer", accessToken, refresh.getToken(), jwtTokenDto.id());
 
-        return JwtTokenDto.from(jwtToken);
+        return ResponseEntity.ok(JwtTokenDto.from(jwtToken));
     }
 
-    public void logout(HttpServletRequest request, JwtTokenDto jwtTokenDto, String oldAccess) {
+    public ResponseEntity<String> logout(HttpServletRequest request, JwtTokenDto jwtTokenDto, String oldAccess) {
 
         recordEvent(request, jwtTokenDto.id(), Event.LOG_OUT);
 
         tokenBlacklistService.addToBlacklist(oldAccess);
 
         refreshTokenRepository.deleteByUserIdAndToken(jwtTokenDto.id(), jwtTokenDto.refreshToken());
+
+        return ResponseEntity.ok("Logout successful");
     }
 
-    public ResponseEntity<?> sendSms(String phone) {
+    public ResponseEntity<String> sendSms(String phone) {
         String phoneNum = phone.replaceAll("-","");
 
         String verificationCode = Integer.toString((int)(Math.random() * (999999 - 100000 + 1)) + 100000);
@@ -87,13 +90,16 @@ public class AuthService {
 
         verificationCodeService.saveVerificationCode(phone, verificationCode);
 
-        return new ResponseEntity<>("Text sent successfully", HttpStatus.OK);
+        return ResponseEntity.ok("Text sent successfully");
     }
 
-    public boolean checkVerifyCode(VerifyCodeRequestDto verifyCodeRequestDto) {
+    public ResponseEntity<Boolean> checkVerifyCode(VerifyCodeRequestDto verifyCodeRequestDto) {
 
-        return verificationCodeService.verifyCode(verifyCodeRequestDto.phoneNumber(), verifyCodeRequestDto.verifyCode());
+        boolean result =  verificationCodeService.verifyCode(verifyCodeRequestDto.phoneNumber(), verifyCodeRequestDto.verifyCode());
+
+        return ResponseEntity.ok(result);
     }
+
 
     public void recordEvent(HttpServletRequest request, String userId, Event eventType) {
 

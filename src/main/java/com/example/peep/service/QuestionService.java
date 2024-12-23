@@ -10,6 +10,7 @@ import com.example.peep.dto.StudentDto;
 import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class QuestionService {
     private final CommunityQuestionRepository communityQuestionRepository;
     private final StudentCommunityQuestionRepository studentCommunityQuestionRepository;
 
-    public void chooseStudent(String token, String userId, Long communityQuestionId) {
+    public ResponseEntity<Void> chooseStudent(String token, String userId, Long communityQuestionId) {
         String myId = jwtTokenProvider.getUserId(token);
 
         Student writer = studentRepository.findByUserId(myId).orElseThrow();
@@ -40,10 +41,11 @@ public class QuestionService {
 
         studentCommunityQuestionRepository.save(studentCommunityQuestion);
 
+        return ResponseEntity.noContent().build();
 
     }
 
-    public List<CommunityQuestionDto> getQuestionList(String token) {
+    public ResponseEntity<List<CommunityQuestionDto>> getQuestionList(String token) {
 
         String myId = jwtTokenProvider.getUserId(token);
 
@@ -57,6 +59,6 @@ public class QuestionService {
                     });
         }
 
-        return communityQuestionDtoList;
+        return ResponseEntity.ok(communityQuestionDtoList);
     }
 }

@@ -11,6 +11,7 @@ import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class StudentService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
-    public void newStudent(StudentDto studentDto) {
+    public ResponseEntity<Void> newStudent(StudentDto studentDto) {
 
         School school = schoolRepository.getReferenceById(studentDto.schoolDto().id());
         Coin coin = Coin.of(0);
@@ -67,9 +68,11 @@ public class StudentService {
 
         StudentCommunity studentCommunity = StudentCommunity.of(student, community);
         studentCommunityRepository.save(studentCommunity);
+
+        return ResponseEntity.noContent().build();
     }
 
-    public void modifyStudent(String accessToken, StudentDto studentDto) {
+    public ResponseEntity<Void> modifyStudent(String accessToken, StudentDto studentDto) {
         String myId = jwtTokenProvider.getUserId(accessToken);
         Student student = studentRepository.findByUserId(myId).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
         Photo photo = photoRepository.findById(student.getPhoto().getId()).orElseThrow();
@@ -88,17 +91,11 @@ public class StudentService {
         student.setTel(studentDto.tel());
 
         studentRepository.save(student);
+
+        return ResponseEntity.noContent().build();
     }
 
-    public List<StudentResponse> getFourStudents(String token, Long communityId) {
-        String myId = jwtTokenProvider.getUserId(token);
-
-        return studentRepository.findRandomFourStudents(communityId, myId)
-                .stream().map(StudentResponse::from)
-                .toList();
-    }
-
-    public void deleteStudent(String token) {
+    public ResponseEntity<Void> deleteStudent(String token) {
 
         String myId = jwtTokenProvider.getUserId(token);
 
@@ -108,23 +105,33 @@ public class StudentService {
                 .forEach(follow -> {
                     follow.setIsDeleted(true);
                     followRepository.save(follow);
-        });
+                });
 
         followRepository.findAllByFollowingUserId(student.getUserId())
                 .forEach(follow -> {
                     follow.setIsDeleted(true);
                     followRepository.save(follow);
-        });
+                });
 
         student.setIsDeleted(true);
         student.getCoin().setIsDeleted(true);
         student.getPhoto().setIsDeleted(true);
 
         studentRepository.save(student);
+
+        return ResponseEntity.noContent().build();
     }
 
-    public StudentResponse getStudent(String userId) {
+    public ResponseEntity<List<StudentResponse>> getFourStudents(String token, Long communityId) {
+        String myId = jwtTokenProvider.getUserId(token);
+
+        return ResponseEntity.ok(studentRepository.findRandomFourStudents(communityId, myId)
+                .stream().map(StudentResponse::from)
+                .toList());
+    }
+
+    public ResponseEntity<StudentResponse> getStudent(String userId) {
         Student student = studentRepository.findByUserId(userId).orElseThrow();
-        return StudentResponse.from(student);
+        return ResponseEntity.ok(StudentResponse.from(student));
     }
 }
