@@ -177,7 +177,7 @@ class StudentServiceTest {
         given(jwtTokenProvider.getUserId("token")).willReturn("jihoon");
         given(studentRepository.findRandomFourStudents(1L, "jihoon")).willReturn(list);
         //When
-        List<StudentResponse> result = studentService.getFourStudents("token", 1L);
+        List<StudentResponse> result = studentService.getFourStudents("token", 1L).getBody();
         //Then
         assertThat(result.size()).isEqualTo(3);
     }

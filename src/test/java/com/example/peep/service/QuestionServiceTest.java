@@ -104,7 +104,7 @@ class QuestionServiceTest {
         given(communityQuestionRepository.findAllByCommunityId(1L)).willReturn(cqList1);
         given(communityQuestionRepository.findAllByCommunityId(2L)).willReturn(cqList2);
         //When
-        List<CommunityQuestionDto> result = questionService.getQuestionList("token");
+        List<CommunityQuestionDto> result = questionService.getQuestionList("token").getBody();
         //Then
         assertThat(result.size()).isEqualTo(5);
 

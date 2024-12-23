@@ -18,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -68,11 +70,11 @@ class AuthServiceTest {
         given(jwtTokenProvider.generateToken(authentication, studentDto.userId(), request.getHeader("Method...")))
                 .willReturn(expectedToken);
         //When
-        JwtTokenDto result = authService.login(request, studentDto);
+        ResponseEntity<JwtTokenDto> result = authService.login(request, studentDto);
         //Then
         ArgumentCaptor<LoginRecord> studentCaptor = ArgumentCaptor.forClass(LoginRecord.class);
         then(loginRecordRepository).should().save(studentCaptor.capture());
-        assertThat(result).isNotNull();
+        assertThat(result.getBody()).isNotNull();
     }
 
     @DisplayName("refreshToken - 토큰 갱신 테스트")
@@ -86,10 +88,11 @@ class AuthServiceTest {
         given(jwtTokenProvider.validateToken("refreshToken")).willReturn(true);
         given(jwtTokenProvider.generateAccess("jihoon")).willReturn("newAccessToken");
         //When
-        JwtTokenDto newToken = authService.refreshToken("UUID", token, "oldAccess");
+       JwtTokenDto newToken = authService.refreshToken("UUID", token, "oldAccess").getBody();
 
         //Then
         then(tokenBlacklistService).should().addToBlacklist("oldAccess");
+        assert newToken != null;
         assertThat(newToken.accessToken()).isEqualTo("newAccessToken");
     }
 
@@ -137,7 +140,7 @@ class AuthServiceTest {
         VerifyCodeRequestDto verifyCodeRequestDto = VerifyCodeRequestDto.of("01012345678", "123456");
         given(verificationCodeService.verifyCode("01012345678", "123456")).willReturn(true);
         //When then
-        assertThat(authService.checkVerifyCode(verifyCodeRequestDto)).isEqualTo(true);
+        assertThat(authService.checkVerifyCode(verifyCodeRequestDto).getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
 
