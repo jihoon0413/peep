@@ -1,4 +1,4 @@
-package com.example.peep.enumType;
+package com.example.peep.domain.enumType;
 
 public enum Event {
     LOG_IN,

@@ -1,7 +1,7 @@
 package com.example.peep.dto;
 
 import com.example.peep.domain.Hashtag;
-import com.example.peep.enumType.HashtagType;
+import com.example.peep.domain.enumType.HashtagType;
 
 public record HashtagDto(
         Long id,

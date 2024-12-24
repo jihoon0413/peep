@@ -5,7 +5,7 @@ import com.example.peep.domain.Hashtag;
 import com.example.peep.domain.Student;
 import com.example.peep.domain.mapping.StudentHashtag;
 import com.example.peep.dto.HashtagDto;
-import com.example.peep.enumType.HashtagType;
+import com.example.peep.domain.enumType.HashtagType;
 import com.example.peep.repository.HashtagRepository;
 import com.example.peep.repository.StudentHashtagRepository;
 import com.example.peep.repository.StudentRepository;

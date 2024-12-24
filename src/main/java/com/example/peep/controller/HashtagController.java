@@ -1,7 +1,7 @@
 package com.example.peep.controller;
 
 import com.example.peep.dto.HashtagDto;
-import com.example.peep.enumType.HashtagType;
+import com.example.peep.domain.enumType.HashtagType;
 import com.example.peep.service.HashtagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

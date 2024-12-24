@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/students/new").permitAll()
                         .requestMatchers("/schools/getList").permitAll()
                         .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/refresh").permitAll()
                         .requestMatchers("/auth/sendCode").permitAll()
                         .requestMatchers("/auth/verifyCode").permitAll()
                         .requestMatchers("/follow/getFollowingList").permitAll()
