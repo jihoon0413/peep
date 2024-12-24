@@ -23,11 +23,11 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtTokenDto> refreshToken(@RequestHeader("Authorization") String accessToken,
+    public ResponseEntity<JwtTokenDto> refreshToken(
                                     @RequestHeader("Device-Id") String deviceId,
                                     @RequestBody JwtTokenDto jwtTokenDto) {
 
-        String oldAccess = accessToken.substring(7);
+        String oldAccess = jwtTokenDto.accessToken().substring(7);
         return authService.refreshToken(deviceId, jwtTokenDto, oldAccess);
     }
 

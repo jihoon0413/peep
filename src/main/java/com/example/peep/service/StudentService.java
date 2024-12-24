@@ -7,6 +7,9 @@ import com.example.peep.domain.mapping.StudentHashtag;
 import com.example.peep.dto.HashtagDto;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.response.StudentResponse;
+import com.example.peep.errors.errorcode.CommonErrorCode;
+import com.example.peep.errors.errorcode.CustomErrorCode;
+import com.example.peep.errors.exception.RestApiException;
 import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -131,7 +134,7 @@ public class StudentService {
     }
 
     public ResponseEntity<StudentResponse> getStudent(String userId) {
-        Student student = studentRepository.findByUserId(userId).orElseThrow();
+        Student student = studentRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("Resource not exists"));
         return ResponseEntity.ok(StudentResponse.from(student));
     }
 }
