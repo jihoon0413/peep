@@ -1,7 +1,7 @@
 package com.example.peep.dto;
 
 import com.example.peep.domain.LoginRecord;
-import com.example.peep.enumType.Event;
+import com.example.peep.domain.enumType.Event;
 
 public record LoginRecordDto(
         String userId,

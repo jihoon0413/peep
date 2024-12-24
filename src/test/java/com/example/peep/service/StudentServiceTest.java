@@ -6,7 +6,7 @@ import com.example.peep.domain.mapping.StudentCommunity;
 import com.example.peep.domain.mapping.StudentHashtag;
 import com.example.peep.dto.*;
 import com.example.peep.dto.response.StudentResponse;
-import com.example.peep.enumType.HashtagType;
+import com.example.peep.domain.enumType.HashtagType;
 import com.example.peep.repository.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

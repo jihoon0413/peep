@@ -1,6 +1,6 @@
 package com.example.peep.domain;
 
-import com.example.peep.enumType.Event;
+import com.example.peep.domain.enumType.Event;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

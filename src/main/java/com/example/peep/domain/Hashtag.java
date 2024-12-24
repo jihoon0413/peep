@@ -1,6 +1,6 @@
 package com.example.peep.domain;
 
-import com.example.peep.enumType.HashtagType;
+import com.example.peep.domain.enumType.HashtagType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

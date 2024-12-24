@@ -5,10 +5,12 @@ import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.details.SmsUtil;
 import com.example.peep.domain.LoginRecord;
 import com.example.peep.domain.RefreshToken;
-import com.example.peep.enumType.Event;
+import com.example.peep.domain.enumType.Event;
 import com.example.peep.dto.JwtTokenDto;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.request.VerifyCodeRequestDto;
+import com.example.peep.errors.errorcode.CustomErrorCode;
+import com.example.peep.errors.exception.RestApiException;
 import com.example.peep.repository.LoginRecordRepository;
 import com.example.peep.repository.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,16 +56,12 @@ public class AuthService {
 
         String accessToken = "";
 
-        try {
-            if (refresh != null && jwtTokenProvider.validateToken(jwtTokenDto.refreshToken()) && jwtTokenDto.refreshToken().contains(refresh.getToken())) {
-                accessToken = jwtTokenProvider.generateAccess(jwtTokenDto.id());
-            } else {
-                throw new IllegalArgumentException();
-            }
-        } catch (IllegalArgumentException e) {
-            log.info("Invalid token");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        if (refresh != null && jwtTokenProvider.validateToken(jwtTokenDto.refreshToken()) && jwtTokenDto.refreshToken().contains(refresh.getToken())) {
+            accessToken = jwtTokenProvider.generateAccess(jwtTokenDto.id());
+        } else {
+            throw new RestApiException(CustomErrorCode.INVALID_PARAMETER);
         }
+
         tokenBlacklistService.addToBlacklist(oldAccess);
         JwtToken jwtToken = new JwtToken("Bearer", accessToken, refresh.getToken(), jwtTokenDto.id());
 
@@ -97,7 +95,10 @@ public class AuthService {
 
         boolean result =  verificationCodeService.verifyCode(verifyCodeRequestDto.phoneNumber(), verifyCodeRequestDto.verifyCode());
 
-        return ResponseEntity.ok(result);
+        if(!result) {
+            throw new RestApiException(CustomErrorCode.WRONG_VERIFICATION_CODE);
+        }
+        return ResponseEntity.ok(true);
     }
 
 
