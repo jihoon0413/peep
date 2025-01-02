@@ -67,6 +67,14 @@ public class Student extends AuditingFields {
     @OneToMany(mappedBy = "chosen", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<StudentCommunityQuestion> chosen;
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "blocker", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Block> blocker;
+
+//    @ToString.Exclude
+//    @OneToMany(mappedBy = "blocked", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private Set<Block> blocked;
+
     @Setter @Column private int grade;
     @Setter @Column private int myClass;
     @Setter @Column private String tel;
