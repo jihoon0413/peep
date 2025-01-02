@@ -15,14 +15,14 @@ public class FollowController {
 
     private final FollowService followService;
 
-    @GetMapping("/newFollow")
+    @PostMapping("/newFollow")
     public ResponseEntity<Void> newFollow(@RequestHeader("Authorization") String token,
                                     @RequestParam("userId") String userId
     ) {
         return followService.newFollow(token, userId);
     }
 
-    @GetMapping("/unFollow")
+    @PostMapping("/unFollow")
     public ResponseEntity<Void> unFollow(@RequestHeader("Authorization") String token,
                          @RequestParam("userId") String userId
     ) {
@@ -39,4 +39,15 @@ public class FollowController {
         return followService.getFollowerList(userId);
     }
 
+    @PostMapping("/block")
+    public ResponseEntity<?> blockFollow(@RequestHeader("Authorization") String token,
+                                         @RequestParam("userId") String userId) {
+        return followService.blockFollow(token, userId);
+    }
+
+    @PostMapping("/unBlock")
+    public ResponseEntity<?> unBlockFollow(@RequestHeader("Authorization") String token,
+                                           @RequestParam("userId") String userId) {
+        return followService.unBlockFollow(token, userId);
+    }
 }

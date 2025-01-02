@@ -1,10 +1,15 @@
 package com.example.peep.service;
 
 import com.example.peep.config.jwt.JwtTokenProvider;
+import com.example.peep.domain.Block;
 import com.example.peep.domain.Follow;
 import com.example.peep.domain.Student;
 import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.response.StudentResponse;
+import com.example.peep.errors.errorcode.CommonErrorCode;
+import com.example.peep.errors.errorcode.CustomErrorCode;
+import com.example.peep.errors.exception.RestApiException;
+import com.example.peep.repository.BlockRepository;
 import com.example.peep.repository.FollowRepository;
 import com.example.peep.repository.StudentRepository;
 import jakarta.transaction.Transactional;
@@ -25,6 +30,7 @@ public class FollowService {
     private final StudentRepository studentRepository;
     private final FollowRepository followRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final BlockRepository blockRepository;
 
     public ResponseEntity<Void> newFollow(String token, String userId) {
 
@@ -32,8 +38,9 @@ public class FollowService {
 
 
         Follow followRecord = followRepository.findByFollowerUserIdAndFollowingUserId(myId, userId).orElse(null);
+        Block block = blockRepository.findByBlockerUserIdAndBlockedUserId(userId, myId).orElse(null);
 
-        if(followRecord == null) {
+        if(followRecord == null && block == null) {
             Student follower = studentRepository.findByUserId(myId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 접근입니다."));
             Student following = studentRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 접근입니다."));
             if(!following.getIsDeleted()) {
@@ -78,4 +85,29 @@ public class FollowService {
                 .filter(Objects::nonNull)
                 .toList());
     }
+
+    public ResponseEntity<?> blockFollow(String token, String userId) {
+
+        String myId = jwtTokenProvider.getUserId(token);
+
+        Student blocker = studentRepository.findByUserId(myId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
+        Student blocked = studentRepository.findByUserId(userId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
+
+        Block block = Block.of(blocker, blocked);
+
+        blockRepository.save(block);
+
+        return ResponseEntity.ok("Block");
+    }
+
+    public ResponseEntity<?> unBlockFollow(String token, String userId) {
+
+        String myId = jwtTokenProvider.getUserId(token);
+
+        blockRepository.deleteByBlockerUserIdAndBlockedUserId(myId, userId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
+
+        return ResponseEntity.ok("unBlock");
+
+    }
+
 }
