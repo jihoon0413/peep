@@ -34,6 +34,8 @@ insert into student (id, user_id, user_password, name, school_id, coin_id, photo
 insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (4, 'soomin', '$2a$10$pLwVE3EJmIPkRqvVLVbRKe0RRSwbC1p2tVdZrDhv6S65y9joeOYxC', '유수민', 1, 4, 4, '853-879-3906', 1, 1, '2024-10-14 20:42:28', '2023-12-30 14:05:07', false);
 insert into student (id, user_id, user_password, name, school_id, coin_id, photo_id, tel, grade, my_class, created_at, updated_at, is_deleted) values (5, 'Cameron', '$2a$10$pLwVE3EJmIPkRqvVLVbRKe0RRSwbC1p2tVdZrDhv6S65y9joeOYxC', 'Cinda', 1, 5, 5, '775-365-3814', 1, 1, '2024-10-17 12:33:43', '2024-07-15 21:09:27', false);
 
+insert into block (id, blocker_id, blocked_id, created_at, updated_at) values (1, 1, 5, '2023-05-22 20:54:03','2024-05-22 20:54:03');
+
 insert into follow (id, follower_id, following_id, created_at, is_deleted) values (1, 1, 3, '2024-05-22 20:54:03', false);
 insert into follow (id, follower_id, following_id, created_at, is_deleted) values (2, 1, 2, '2024-01-20 15:04:37', false);
 insert into follow (id, follower_id, following_id, created_at, is_deleted) values (3, 2, 1, '2024-04-21 06:41:32', false);
@@ -64,8 +66,8 @@ insert into community_question (id, community_id, question_id, created_at, updat
 insert into community_question (id, community_id, question_id, created_at, updated_at) values (4, 1, 1, '2024-02-24 02:04:07', null);
 insert into community_question (id, community_id, question_id, created_at, updated_at) values (5, 2, 1, '2024-10-29 05:23:46', null);
 
---insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (1, 1, 2, 5, '2024-05-26 04:11:25', '2023-11-13 16:14:24');
---insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (2, 1, 3, 3, '2024-04-02 03:05:29', '2023-11-21 18:43:28');
---insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (3, 2, 1, 4, '2024-09-18 14:58:27', '2024-04-27 11:47:41');
---insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (4, 3, 1, 1, '2024-07-22 17:31:20', '2024-03-17 16:45:46');
---insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (5, 4, 1, 4, '2023-11-30 21:44:12', '2024-06-18 02:21:16');
+insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (1, 1, 2, 5, '2024-05-26 04:11:25', '2023-11-13 16:14:24');
+insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (2, 1, 3, 3, '2024-04-02 03:05:29', '2023-11-21 18:43:28');
+insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (3, 2, 1, 4, '2024-09-18 14:58:27', '2024-04-27 11:47:41');
+insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (4, 3, 1, 1, '2024-07-22 17:31:20', '2024-03-17 16:45:46');
+insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (5, 4, 1, 4, '2023-11-30 21:44:12', '2024-06-18 02:21:16');
