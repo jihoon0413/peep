@@ -3,6 +3,7 @@ package com.example.peep.service;
 import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.domain.*;
 import com.example.peep.dto.response.StudentResponse;
+import com.example.peep.repository.BlockRepository;
 import com.example.peep.repository.FollowRepository;
 import com.example.peep.repository.StudentRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ class FollowServiceTest {
     @Mock StudentRepository studentRepository;
     @Mock JwtTokenProvider jwtTokenProvider;
     @Mock FollowRepository followRepository;
+    @Mock BlockRepository blockRepository;
 
     @InjectMocks FollowService followService;
 
@@ -34,8 +36,8 @@ class FollowServiceTest {
     void given_whenNewFollow_thenSaveNewFollow() {
 
         //Given
-        Student follower = Student.of("minji", "1234", "민지", null, null, null, 3,1,"01012345678");
-        Student following = Student.of("jihoon", "1234", "지훈", null, null, null, 3,2,"01087654321");
+        Student follower = makeStudent("minji", null, null);
+        Student following = makeStudent("jihoon", null, null);
         String token = "token";
 
         given(jwtTokenProvider.getUserId("token")).willReturn("jihoon");
@@ -57,8 +59,9 @@ class FollowServiceTest {
 
         //Given
         String userId = "minji";
-        Student std1 = Student.of("jihoon", "1234", "지훈", null, null , null, 3, 1, "01012345567");
-        Student std2 = Student.of("minji", "1234", "민지", null, null , null, 3, 2, "01012345567");
+        Student std1 = makeStudent("minji", null, null);
+        Student std2 = makeStudent("jihoon", null, null);
+
         Follow follow = Follow.of(std1, std2);
         given(jwtTokenProvider.getUserId("token")).willReturn("jihoon");
         given(followRepository.findByFollowerUserIdAndFollowingUserId("jihoon", userId)).willReturn(Optional.of(follow));
@@ -77,11 +80,12 @@ class FollowServiceTest {
         //Given
         String userId = "jihoon";
         List<Follow> followingList = new ArrayList<>();
-        School school = School.of("광주광역시교육청", "광주고등학교");
-        Photo photo = Photo.of("dummy");
-        Student std = Student.of("jihoon", null, "지훈", school, null, photo, 3,1,"01012345678");
-        Student std1 = Student.of("minji", null, "민지", school, null, photo, 2,1,"01012345678");
-        Student std2 = Student.of("inseo", null, "인서", school, null, photo, 1, 1, "01087654321");
+        School school = makeSchool();
+        Photo photo = makePhoto();
+
+        Student std = makeStudent("jihoon",school,photo);
+        Student std1 = makeStudent("minji", school, photo);
+        Student std2 = makeStudent("inseo", school, photo);
         followingList.add(Follow.of(std, std1));
         followingList.add(Follow.of(std, std2));
 
@@ -103,11 +107,13 @@ class FollowServiceTest {
         //Given
         String userId = "jihoon";
         List<Follow> followerList = new ArrayList<>();
-        School school = School.of("광주광역시교육청", "광주고등학교");
-        Photo photo = Photo.of("dummy");
-        Student std = Student.of("jihoon", null, "지훈", school, null, photo, 3,1,"01012345678");
-        Student std1 = Student.of("minji", null, "민지", school, null, photo, 2,1,"01012345678");
-        Student std2 = Student.of("inseo", null, "인서", school, null, photo, 1, 1, "01087654321");
+        School school = makeSchool();
+        Photo photo = makePhoto();
+
+        Student std = makeStudent("jihoon",school,photo);
+        Student std1 = makeStudent("minji", school, photo);
+        Student std2 = makeStudent("inseo", school, photo);
+
         followerList.add(Follow.of(std1, std));
         followerList.add(Follow.of(std2, std));
 
@@ -121,5 +127,62 @@ class FollowServiceTest {
 //        assertThat(studentDtoList.get(0).userId()).isEqualTo("minji");
         assertThat(studentDtoList.get(1).userId()).isEqualTo("inseo");
 
+    }
+
+    @DisplayName("block - 차단 기능")
+    @Test
+    void givenTokenAndId_whenBlock_thenSaveNewBlock() {
+
+        //Given
+        String token = "token";
+        String userId = "sample";
+
+        School school = makeSchool();
+        Photo photo = makePhoto();
+        Student std1 = makeStudent("jihoon",school, photo);
+        Student std2 = makeStudent("sample", school, photo);
+
+        given(jwtTokenProvider.getUserId(token)).willReturn("jihoon");
+        given(studentRepository.findByUserId("jihoon")).willReturn(Optional.ofNullable(std1));
+        given(studentRepository.findByUserId("sample")).willReturn(Optional.ofNullable(std2));
+        //When
+        followService.blockFollow(token, userId);
+        //Then
+        ArgumentCaptor<Block> argumentCaptor = ArgumentCaptor.forClass(Block.class);
+        then(blockRepository).should().save(argumentCaptor.capture());
+
+    }
+
+    @DisplayName("unBlock - 차단 해제 기능")
+    @Test
+    void givenTokenAndId_whenUnBlock_thenDeleteBlock() {
+
+        //Given
+        String token = "token";
+        String userId = "sample";
+        School school = makeSchool();
+        Photo photo = makePhoto();
+        Student std1 = makeStudent("jihoon", school, photo);
+        Student std2 = makeStudent("sample", school, photo);
+        Block block = Block.of(std1,std2);
+        given(jwtTokenProvider.getUserId("token")).willReturn("jihoon");
+        given(blockRepository.deleteByBlockerUserIdAndBlockedUserId("jihoon", "sample")).willReturn(Optional.of(block));
+        //When
+        followService.unBlockFollow(token, userId);
+        //Then
+        then(blockRepository).should().deleteByBlockerUserIdAndBlockedUserId("jihoon", "sample");
+    }
+
+    Student makeStudent(String userId, School school, Photo photo) {
+
+        return Student.of(userId, "1234", "지훈", school, null, photo, 3,1,"01012345678");
+    }
+
+    School makeSchool() {
+        return School.of("광주광역시교육청", "광주고등학교");
+    }
+
+    Photo makePhoto() {
+        return Photo.of("dummy");
     }
 }
