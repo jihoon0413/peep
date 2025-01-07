@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(columnList = "blocker"),
-        @Index(columnList = "blocked")
+        @Index(columnList = "blocker_id"),
+        @Index(columnList = "blocked_id")
 })
 public class Block extends AuditingFields{
 
