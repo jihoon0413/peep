@@ -1,8 +1,8 @@
-insert into school (id, education_office, school_name) values (1, '광주광역시교육청', '광주고등학교');
-insert into school (id, education_office, school_name) values (2, '광주광역시교육청', '조선대학교부속중학교');
-insert into school (id, education_office, school_name) values (3, '광주광역시교육청', '동신여자고등하교');
-insert into school (id, education_office, school_name) values (4, '광주광역시교육청', '문산중학교');
-insert into school (id, education_office, school_name) values (5, '광주광역시교육청', '살레시오고등학교');
+insert into school (id, education_office, school_name, created_at, updated_at, is_deleted) values (1, '광주광역시교육청', '광주고등학교', '2024-06-29 01:32:39', '2024-06-21 10:49:26', false);
+insert into school (id, education_office, school_name, created_at, updated_at, is_deleted) values (2, '광주광역시교육청', '조선대학교부속중학교', '2024-05-03 16:59:25', '2024-02-14 08:26:46', false);
+insert into school (id, education_office, school_name, created_at, updated_at, is_deleted) values (3, '광주광역시교육청', '동신여자고등하교', '2023-11-14 17:55:06', '2024-03-18 08:25:05', false);
+insert into school (id, education_office, school_name, created_at, updated_at, is_deleted) values (4, '광주광역시교육청', '문산중학교', '2023-11-14 17:55:06', '2024-03-18 08:25:05', false);
+insert into school (id, education_office, school_name, created_at, updated_at, is_deleted) values (5, '광주광역시교육청', '살레시오고등학교', '2024-06-29 01:32:39', '2024-06-21 10:49:26', false);
 
 insert into question (id, content, created_at) values (1, 'Maecenas tincidunt lacus at velit.', '2024-05-24 22:27:31');
 insert into question (id, content, created_at) values (2, 'Proin eu mi. Nulla ac enim.', '2024-06-11 21:08:37');
