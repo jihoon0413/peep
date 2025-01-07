@@ -5,6 +5,7 @@ import com.example.peep.repository.RefreshTokenRepository;
 import com.example.peep.service.TokenBlacklistService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class JwtTokenProvider {
 
     private final Key key;
