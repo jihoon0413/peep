@@ -26,7 +26,7 @@ public class SecurityConfig {
             HttpSecurity http
     ) throws Exception {
         return http
-//                .httpBasic(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
