@@ -7,8 +7,8 @@ import org.hibernate.annotations.SQLRestriction;
 
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(columnList = "follower"),
-        @Index(columnList = "following"),
+        @Index(columnList = "follower_id"),
+        @Index(columnList = "following_id"),
 })
 @SQLRestriction("is_deleted = false")
 @Getter
