@@ -52,11 +52,11 @@ public class Student extends AuditingFields {
     private Set<StudentHashtag> hashtags = new HashSet<>();
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "following", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Follow> followers;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "following", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Follow> following;
 
     @ToString.Exclude
