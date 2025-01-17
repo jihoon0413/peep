@@ -26,9 +26,6 @@ public class SecurityConfig {
             HttpSecurity http
     ) throws Exception {
         return http
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/","/login","/loginForm","/joinForm").permitAll()
                         .requestMatchers("/students/new").permitAll()
