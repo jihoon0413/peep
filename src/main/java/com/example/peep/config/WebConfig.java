@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
 //                .allowedOrigins("https://peep-nu.vercel.app/")
                 .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST")
+                .allowedMethods("GET", "POST", "OPTIONS")
                 .allowCredentials(true);
     }
 }
