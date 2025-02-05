@@ -24,6 +24,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -50,31 +52,41 @@ public class AuthService {
         return ResponseEntity.ok(jwtTokenDto);
     }
 
-    public ResponseEntity<JwtTokenDto> refreshToken(String deviceId, JwtTokenDto jwtTokenDto, String oldAccess) {
+    public ResponseEntity<JwtTokenDto> refreshToken(String deviceId, String token) {
 
-        RefreshToken refresh = refreshTokenRepository.findByUserIdAndDeviceId(jwtTokenDto.id(), deviceId);
+        String refreshToken = token.substring(7);
+
+        RefreshToken refresh = refreshTokenRepository.findByTokenAndDeviceId(refreshToken, deviceId);
 
         String accessToken = "";
+        String newRefresh = "";
 
-        if (refresh != null && jwtTokenProvider.validateToken(jwtTokenDto.refreshToken()) && jwtTokenDto.refreshToken().contains(refresh.getToken())) {
-            accessToken = jwtTokenProvider.generateAccess(jwtTokenDto.id());
+        if (refresh != null && jwtTokenProvider.validateToken(refresh.getToken())) {
+            accessToken = jwtTokenProvider.generateAccess(refresh.getUserId());
+            long now = (new Date()).getTime();
+            newRefresh = jwtTokenProvider.generateRefresh(new Date(now + 1000 * 60 * 60 * 24 * 7));
+            refresh.setToken(newRefresh);
+            refreshTokenRepository.save(refresh);
         } else {
             throw new RestApiException(CustomErrorCode.INVALID_PARAMETER);
         }
 
-        tokenBlacklistService.addToBlacklist(oldAccess);
-        JwtToken jwtToken = new JwtToken("Bearer", accessToken, refresh.getToken(), jwtTokenDto.id());
+//        tokenBlacklistService.addToBlacklist(oldAccess);
+        JwtToken jwtToken = new JwtToken("Bearer", accessToken, newRefresh, refresh.getUserId());
 
         return ResponseEntity.ok(JwtTokenDto.from(jwtToken));
     }
 
-    public ResponseEntity<String> logout(HttpServletRequest request, JwtTokenDto jwtTokenDto, String oldAccess) {
+    public ResponseEntity<String> logout(HttpServletRequest request, String deviceId, String oldAccess) {
 
-        recordEvent(request, jwtTokenDto.id(), Event.LOG_OUT);
+        String accessToken = oldAccess.substring(7);
+        String id = jwtTokenProvider.getUserId(oldAccess);
 
-        tokenBlacklistService.addToBlacklist(oldAccess);
+        recordEvent(request, id, Event.LOG_OUT);
 
-        refreshTokenRepository.deleteByUserIdAndToken(jwtTokenDto.id(), jwtTokenDto.refreshToken());
+        tokenBlacklistService.addToBlacklist(accessToken);
+
+        refreshTokenRepository.deleteByUserIdAndDeviceId(id, deviceId);
 
         return ResponseEntity.ok("Logout successful");
     }
