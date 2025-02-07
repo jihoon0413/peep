@@ -25,20 +25,19 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<JwtTokenDto> refreshToken(
                                     @RequestHeader("Device-Id") String deviceId,
-                                    @RequestBody JwtTokenDto jwtTokenDto) {
+                                    @RequestHeader("refresh-token") String refreshToken) {
 
-        String oldAccess = jwtTokenDto.accessToken().substring(7);
-        return authService.refreshToken(deviceId, jwtTokenDto, oldAccess);
+        return authService.refreshToken(deviceId, refreshToken);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request,
-                         @RequestBody JwtTokenDto jwtTokenDto,
-                         @RequestHeader("Authorization") String accessToken) {
+                                         @RequestHeader("Device-Id") String deviceId,
+                                         @RequestHeader("Authorization") String accessToken) {
 
         String oldAccess = accessToken.substring(7);
 
-        return authService.logout(request, jwtTokenDto, oldAccess);
+        return authService.logout(request, deviceId, accessToken);
 
     }
 

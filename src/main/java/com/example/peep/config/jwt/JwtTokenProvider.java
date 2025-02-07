@@ -86,7 +86,7 @@ public class JwtTokenProvider {
 
     public void saveRefresh(RefreshToken refreshToken){
 
-        RefreshToken refresh = refreshTokenRepository.findByUserIdAndDeviceId(refreshToken.getUserId(), refreshToken.getDeviceId());
+        RefreshToken refresh = refreshTokenRepository.findByTokenAndDeviceId(refreshToken.getToken(), refreshToken.getDeviceId());
 
         if(refresh == null) {
             refreshTokenRepository.save(refreshToken);
