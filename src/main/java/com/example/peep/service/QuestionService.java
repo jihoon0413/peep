@@ -11,6 +11,8 @@ import com.example.peep.domain.mapping.StudentQuestion;
 import com.example.peep.dto.CommunityQuestionDto;
 import com.example.peep.dto.StudentQuestionDto;
 import com.example.peep.dto.response.HomeResponse;
+import com.example.peep.errors.errorcode.CustomErrorCode;
+import com.example.peep.errors.exception.RestApiException;
 import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -36,7 +39,7 @@ public class QuestionService {
     private final StudentCommunityQuestionRepository studentCommunityQuestionRepository;
     private final StudentQuestionRepository studentQuestionRepository;
 
-    public ResponseEntity<Void> chooseStudent(String token, String userId, Long communityQuestionId) {
+    public ResponseEntity<Void> commonChooseStudent(String token, String userId, Long communityQuestionId) {
         String myId = jwtTokenProvider.getUserId(token);
 
         Student writer = studentRepository.findByUserId(myId).orElseThrow();
@@ -52,6 +55,25 @@ public class QuestionService {
         return ResponseEntity.noContent().build();
 
     }
+
+    public ResponseEntity<Void> randomChooseStudent(String token, String userId, Long studentQuestionId) {
+
+        String myId = jwtTokenProvider.getUserId(token);
+
+        Student chosen = studentRepository.findByUserId(userId).orElseThrow();
+
+        StudentQuestion studentQuestion = studentQuestionRepository.findById(studentQuestionId).orElseThrow();
+
+        if(!Objects.equals(studentQuestion.getWriter().getUserId(), myId)) {
+            throw new RestApiException(CustomErrorCode.WRONG_VERIFICATION_CODE);
+        }
+        studentQuestion.setChosen(chosen);
+
+        studentQuestionRepository.save(studentQuestion);
+
+        return ResponseEntity.noContent().build();
+    }
+
 
     public ResponseEntity<HomeResponse> getQuestionList(String token) {
 
