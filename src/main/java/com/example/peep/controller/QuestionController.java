@@ -1,8 +1,6 @@
 package com.example.peep.controller;
 
-import com.example.peep.domain.mapping.CommunityQuestion;
 import com.example.peep.dto.CommunityQuestionDto;
-import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.response.HomeResponse;
 import com.example.peep.service.QuestionService;
 import lombok.RequiredArgsConstructor;

@@ -42,20 +42,6 @@ public record StudentDto(
         );
     }
 
-    public Student toEntity() {
-        return Student.of(
-                userId,
-                userPassword,
-                name,
-                schoolDto.toEntity(),
-                coinDto.toEntity(),
-                photoDto.toEntity(),
-                grade,
-                myClass,
-                tel
-        );
-    }
-
     public Student toEntity(School school, Coin coin, Photo photo) {
         return Student.of(
                 userId,
