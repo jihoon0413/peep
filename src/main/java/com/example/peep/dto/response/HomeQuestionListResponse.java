@@ -5,12 +5,12 @@ import com.example.peep.dto.StudentQuestionDto;
 
 import java.util.List;
 
-public record HomeResponse(
+public record HomeQuestionListResponse(
         List<CommunityQuestionDto> commonQuestions,
         List<StudentQuestionDto> randomQuestions
 ) {
-    public static HomeResponse of(List<CommunityQuestionDto> commonQuestions, List<StudentQuestionDto> randomQuestions) {
-        return new HomeResponse(commonQuestions, randomQuestions);
+    public static HomeQuestionListResponse of(List<CommunityQuestionDto> commonQuestions, List<StudentQuestionDto> randomQuestions) {
+        return new HomeQuestionListResponse(commonQuestions, randomQuestions);
     }
 
 }
