@@ -13,19 +13,19 @@ public class StudentCommunityQuestion extends AuditingFields {
 
     @ManyToOne
     @JoinColumn(name = "writer_id")
-    private Student writer;
+    private Student writerInCommunity;
 
     @ManyToOne
     @JoinColumn(name = "chosen_id")
-    private Student chosen;
+    private Student chosenInCommunity;
 
     @ManyToOne
     @JoinColumn(name = "community_question_id")
     private CommunityQuestion communityQuestion;
 
     private StudentCommunityQuestion(Student writer, Student chosen, CommunityQuestion communityQuestion) {
-        this.writer = writer;
-        this.chosen = chosen;
+        this.writerInCommunity = writer;
+        this.chosenInCommunity = chosen;
         this.communityQuestion = communityQuestion;
     }
 
