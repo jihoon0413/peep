@@ -3,6 +3,7 @@ package com.example.peep.domain;
 import com.example.peep.domain.mapping.StudentCommunity;
 import com.example.peep.domain.mapping.StudentCommunityQuestion;
 import com.example.peep.domain.mapping.StudentHashtag;
+import com.example.peep.domain.mapping.StudentQuestion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -60,12 +61,20 @@ public class Student extends AuditingFields {
     private Set<Follow> following;
 
     @ToString.Exclude
+    @OneToMany(mappedBy = "writerInCommunity", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<StudentCommunityQuestion> writerInCommunity;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "chosenInCommunity", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<StudentCommunityQuestion> chosenInCommunity;
+
+    @ToString.Exclude
     @OneToMany(mappedBy = "writer", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<StudentCommunityQuestion> writer;
+    private Set<StudentQuestion> writer;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "chosen", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<StudentCommunityQuestion> chosen;
+    private Set<StudentQuestion> chosen;
 
 //    @ToString.Exclude
 //    @OneToMany(mappedBy = "blocked", cascade = CascadeType.REMOVE, orphanRemoval = true)
