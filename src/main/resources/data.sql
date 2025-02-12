@@ -72,4 +72,4 @@ insert into student_community_question (id, writer_id, chosen_id, community_ques
 insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (4, 3, 1, 1, '2024-07-22 17:31:20', '2024-09-17 16:45:46');
 insert into student_community_question (id, writer_id, chosen_id, community_question_id, created_at, updated_at) values (5, 4, 1, 4, '2023-11-30 21:44:12', '2024-06-18 02:21:16');
 
-insert into student_question(id, writer_id, question_id, whether) values (1, 1, 1, false);
+insert into student_question(id, writer_id, question_id, whether, created_at, updated_at, is_deleted) values (1, 1, 1, false, '2023-05-26 04:11:25', '2023-11-13 16:14:24', false);
