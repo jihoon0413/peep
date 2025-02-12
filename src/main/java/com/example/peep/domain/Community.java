@@ -29,10 +29,6 @@ public class Community extends AuditingFields{
     @OneToMany(mappedBy = "community")
     private Set<StudentCommunity> students = new HashSet<>();
 
-//    @ToString.Exclude
-//    @OneToMany(mappedBy = "community")
-//    private Set<CommunityQuestion> questions = new HashSet<>();
-
     @Setter @Column private int grade;
     @Setter @Column private int myClass;
 
@@ -46,7 +42,18 @@ public class Community extends AuditingFields{
         this.myClass = myClass;
     }
 
+    private Community(School school) {
+        this.school = school;
+        this.grade = 0;
+        this.myClass = 0;
+
+    }
+
     public static Community of(School school, int grade, int myClass) {
         return new Community(school, grade, myClass);
+    }
+
+    public static Community of(School school) {
+        return new Community(school);
     }
 }
