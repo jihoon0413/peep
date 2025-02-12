@@ -1,11 +1,7 @@
 package com.example.peep.dto.response;
 
 import com.example.peep.domain.Student;
-import com.example.peep.dto.HashtagDto;
 import com.example.peep.dto.PhotoDto;
-import com.example.peep.dto.SchoolDto;
-
-import java.util.List;
 
 public record StudentResponse(
     String userId,

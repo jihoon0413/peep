@@ -9,7 +9,6 @@ import com.example.peep.domain.mapping.StudentCommunity;
 import com.example.peep.domain.mapping.StudentCommunityQuestion;
 import com.example.peep.domain.mapping.StudentQuestion;
 import com.example.peep.dto.CommunityQuestionDto;
-import com.example.peep.dto.StudentDto;
 import com.example.peep.dto.StudentQuestionDto;
 import com.example.peep.dto.response.HomeResponse;
 import com.example.peep.repository.*;
@@ -63,16 +62,13 @@ public class QuestionService {
         List<CommunityQuestionDto> communityQuestionDtoList = new ArrayList<>();
         List<StudentQuestionDto> studentQuestionList = new ArrayList<>();
         LocalDate date = LocalDate.now();
-        Long id = 0L;
+        Long id = studentCommunities.getFirst().getStudent().getId();
         for(StudentCommunity studentCommunity : studentCommunities) {
             communityQuestionRepository.findAllByCommunityIdAndDate(studentCommunity.getCommunity().getId(), date)
                     .forEach(communityQuestion -> {
                         communityQuestionDtoList.add(CommunityQuestionDto.from(communityQuestion));
                     });
-            id = studentCommunity.getStudent().getId();
         }
-
-
 
         studentQuestionRepository.findAllByWriterIdAndDate(id, date)
                 .forEach(studentQuestion -> {

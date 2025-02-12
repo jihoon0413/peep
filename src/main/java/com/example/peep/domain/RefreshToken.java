@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -31,11 +29,6 @@ public class RefreshToken {
 
     public static RefreshToken of(String userId, String deviceId, String token, Date expiryDate) {
         return new RefreshToken(userId, deviceId, token, expiryDate);
-    }
-
-    public void updateToken(String token, Date expiryDate) {
-        this.token = token;
-        this.expiryDate = expiryDate;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.example.peep.repository;
 
 import com.example.peep.domain.Student;
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
