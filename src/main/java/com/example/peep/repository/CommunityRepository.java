@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
     Optional<Community> findBySchoolIdAndGradeAndMyClass(Long schoolId, int grade, int myClass);
+    Optional<Community> findAllBySchoolId(Long schoolId);
 }
