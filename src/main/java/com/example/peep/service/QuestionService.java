@@ -4,13 +4,16 @@ import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.domain.Community;
 import com.example.peep.domain.Question;
 import com.example.peep.domain.Student;
+import com.example.peep.domain.enumType.QuestionType;
 import com.example.peep.domain.mapping.CommunityQuestion;
 import com.example.peep.domain.mapping.StudentCommunity;
 import com.example.peep.domain.mapping.StudentCommunityQuestion;
 import com.example.peep.domain.mapping.StudentQuestion;
 import com.example.peep.dto.CommunityQuestionDto;
+import com.example.peep.dto.QuestionDto;
 import com.example.peep.dto.StudentQuestionDto;
-import com.example.peep.dto.response.HomeResponse;
+import com.example.peep.dto.response.HomeQuestionListResponse;
+import com.example.peep.dto.response.QuestionResponse;
 import com.example.peep.errors.errorcode.CustomErrorCode;
 import com.example.peep.errors.exception.RestApiException;
 import com.example.peep.repository.*;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,7 +79,7 @@ public class QuestionService {
     }
 
 
-    public ResponseEntity<HomeResponse> getQuestionList(String token) {
+    public ResponseEntity<HomeQuestionListResponse> getQuestionList(String token) {
 
         String myId = jwtTokenProvider.getUserId(token);
 
@@ -97,11 +101,36 @@ public class QuestionService {
                     studentQuestionList.add(StudentQuestionDto.from(studentQuestion));
                 });
 
-        HomeResponse homeResponse = HomeResponse.of(communityQuestionDtoList, studentQuestionList);
+        HomeQuestionListResponse homeResponse = HomeQuestionListResponse.of(communityQuestionDtoList, studentQuestionList);
 
         return ResponseEntity.ok(homeResponse);
     }
 
+    public ResponseEntity<List<QuestionResponse>> getChosenQuestionList(String token) {
+        String myId = jwtTokenProvider.getUserId(token);
+
+        List<QuestionResponse> questionResponseList = new ArrayList<>();
+
+        studentCommunityQuestionRepository.findAllByChosenInCommunityUserId(myId)
+                .forEach(studentCommunityQuestion -> {
+                    questionResponseList.add(QuestionResponse.of(studentCommunityQuestion.getId(),
+                            QuestionDto.from(studentCommunityQuestion.getCommunityQuestion().getQuestion()),
+                            studentCommunityQuestion.getUpdatedAt(),
+                            QuestionType.COMMON));
+                });
+
+        studentQuestionRepository.findAllByChosenUserId(myId)
+                .forEach(studentQuestion -> {
+                    questionResponseList.add(QuestionResponse.of(studentQuestion.getId(),
+                            QuestionDto.from(studentQuestion.getQuestion()),
+                            studentQuestion.getUpdatedAt(),
+                            QuestionType.RANDOM));
+                });
+
+        questionResponseList.sort(Comparator.comparing(QuestionResponse::chosenDate).reversed());
+
+        return ResponseEntity.ok(questionResponseList);
+    }
     //TODO: 대용량 처리가 예상됨으로 spring batch 도입 고려
 
     @Scheduled(fixedRate = 1000 * 60 * 60 * 3, initialDelay = 1000 * 30)
@@ -133,5 +162,6 @@ public class QuestionService {
         }
         studentQuestionRepository.saveAll(studentQuestions);
     }
+
 
 }

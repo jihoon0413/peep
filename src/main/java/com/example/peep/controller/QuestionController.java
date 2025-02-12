@@ -2,12 +2,12 @@ package com.example.peep.controller;
 
 import com.example.peep.dto.CommunityQuestionDto;
 import com.example.peep.dto.StudentQuestionDto;
-import com.example.peep.dto.response.HomeResponse;
+import com.example.peep.dto.response.HomeQuestionListResponse;
+import com.example.peep.dto.response.QuestionResponse;
 import com.example.peep.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.Path;
 
 import java.util.List;
 
@@ -33,7 +33,12 @@ public class QuestionController {
     }
 
     @GetMapping("/getQuestionList")
-    public ResponseEntity<HomeResponse> getQuestionList(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<HomeQuestionListResponse> getQuestionList(@RequestHeader("Authorization") String token) {
         return questionService.getQuestionList(token);
+    }
+
+    @GetMapping("/getChosenQuestionList")
+    public ResponseEntity<List<QuestionResponse>> getChosenQuestionList(@RequestHeader("Authorization") String token) {
+        return questionService.getChosenQuestionList(token);
     }
 }
