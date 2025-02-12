@@ -62,10 +62,10 @@ public class StudentService {
             }
         }
 
-        Community community = communityRepository.findBySchoolIdAndGradeAndMyClass(school.getId(), studentDto.grade(), studentDto.myClass()).orElse(null);
+        Community community = communityRepository.findBySchoolIdAndGradeAndMyClass(school.getId(),0,0).orElse(null);
 
         if(community == null) {
-            community = Community.of(school, studentDto.grade(), studentDto.myClass());
+            community = Community.of(school);
             communityRepository.save(community);
         }
 
