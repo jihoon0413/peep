@@ -13,7 +13,7 @@ import com.example.peep.dto.CommunityQuestionDto;
 import com.example.peep.dto.QuestionDto;
 import com.example.peep.dto.StudentQuestionDto;
 import com.example.peep.dto.response.HomeQuestionListResponse;
-import com.example.peep.dto.response.QuestionResponse;
+import com.example.peep.dto.response.ChosenQuestionResponse;
 import com.example.peep.errors.errorcode.CustomErrorCode;
 import com.example.peep.errors.exception.RestApiException;
 import com.example.peep.repository.*;
@@ -106,14 +106,14 @@ public class QuestionService {
         return ResponseEntity.ok(homeResponse);
     }
 
-    public ResponseEntity<List<QuestionResponse>> getChosenQuestionList(String token) {
+    public ResponseEntity<List<ChosenQuestionResponse>> getChosenQuestionList(String token) {
         String myId = jwtTokenProvider.getUserId(token);
 
-        List<QuestionResponse> questionResponseList = new ArrayList<>();
+        List<ChosenQuestionResponse> questionResponseList = new ArrayList<>();
 
         studentCommunityQuestionRepository.findAllByChosenInCommunityUserId(myId)
                 .forEach(studentCommunityQuestion -> {
-                    questionResponseList.add(QuestionResponse.of(studentCommunityQuestion.getId(),
+                    questionResponseList.add(ChosenQuestionResponse.of(studentCommunityQuestion.getId(),
                             QuestionDto.from(studentCommunityQuestion.getCommunityQuestion().getQuestion()),
                             studentCommunityQuestion.getUpdatedAt(),
                             QuestionType.COMMON));
@@ -121,13 +121,13 @@ public class QuestionService {
 
         studentQuestionRepository.findAllByChosenUserId(myId)
                 .forEach(studentQuestion -> {
-                    questionResponseList.add(QuestionResponse.of(studentQuestion.getId(),
+                    questionResponseList.add(ChosenQuestionResponse.of(studentQuestion.getId(),
                             QuestionDto.from(studentQuestion.getQuestion()),
                             studentQuestion.getUpdatedAt(),
                             QuestionType.RANDOM));
                 });
 
-        questionResponseList.sort(Comparator.comparing(QuestionResponse::chosenDate).reversed());
+        questionResponseList.sort(Comparator.comparing(ChosenQuestionResponse::chosenDate).reversed());
 
         return ResponseEntity.ok(questionResponseList);
     }
