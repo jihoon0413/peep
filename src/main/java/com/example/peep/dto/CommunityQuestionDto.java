@@ -13,7 +13,10 @@ public record CommunityQuestionDto(
     }
 
     public static CommunityQuestionDto from(CommunityQuestion communityQuestion) {
-        return CommunityQuestionDto.of(communityQuestion.getId(), CommunityDto.from(communityQuestion.getCommunity()), QuestionDto.from(communityQuestion.getQuestion()));
+        return CommunityQuestionDto.of(
+                communityQuestion.getId(),
+                CommunityDto.from(communityQuestion.getCommunity()),
+                QuestionDto.from(communityQuestion.getQuestion()));
     }
 
 }

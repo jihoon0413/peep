@@ -3,8 +3,12 @@ package com.example.peep.domain.mapping;
 import com.example.peep.domain.AuditingFields;
 import com.example.peep.domain.Student;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class StudentCommunityQuestion extends AuditingFields {
 
     @Id

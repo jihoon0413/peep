@@ -11,4 +11,5 @@ import java.util.List;
 public interface StudentQuestionRepository extends JpaRepository<StudentQuestion, Long> {
     @Query(value = "SELECT * FROM student_question WHERE writer_id = :id AND DATE(created_at) = :date", nativeQuery = true)
     List<StudentQuestion> findAllByWriterIdAndDate(@Param("id") Long id, @Param("date") LocalDate date);
+    List<StudentQuestion> findAllByChosenUserId(String myId);
 }
