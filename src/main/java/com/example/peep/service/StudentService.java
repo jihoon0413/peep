@@ -6,6 +6,7 @@ import com.example.peep.domain.mapping.StudentCommunity;
 import com.example.peep.domain.mapping.StudentHashtag;
 import com.example.peep.dto.HashtagDto;
 import com.example.peep.dto.StudentDto;
+import com.example.peep.dto.response.StudentDetailResponse;
 import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
@@ -14,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -130,8 +134,25 @@ public class StudentService {
                 .toList());
     }
 
-    public ResponseEntity<StudentResponse> getStudent(String userId) {
+    public ResponseEntity<StudentDetailResponse> getStudent(String token, String userId) {
+        String myId = jwtTokenProvider.getUserId(token);
         Student student = studentRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("Resource not exists"));
-        return ResponseEntity.ok(StudentResponse.from(student));
+
+        int followerCount = followRepository.findAllByFollowingUserId(userId).size();
+        int followingCount = followRepository.findAllByFollowerUserId(userId).size();
+        List<HashtagDto> hashtagDtoList = student.getHashtags().stream()
+                .map(studentHashtag -> HashtagDto.from(studentHashtag.getHashtag()))
+                .toList();
+        Boolean isFollowedByMe = null;
+        if(!myId.equals(userId)) {
+            isFollowedByMe = isFollowedByMe(myId, userId);
+        }
+
+        return ResponseEntity.ok(StudentDetailResponse.from(student, isFollowedByMe, followerCount, followingCount, hashtagDtoList));
+    }
+
+    private boolean isFollowedByMe(String myId, String followerId){
+        Optional<Follow> follow = followRepository.findByFollowerUserIdAndFollowingUserId(myId, followerId);
+        return follow.isPresent();
     }
 }
