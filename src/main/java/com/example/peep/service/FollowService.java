@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -78,7 +79,7 @@ public class FollowService {
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollower().getId())
                         .filter(student -> !student.getIsDeleted())
-                        .map(StudentResponse::from)
+                        .map(student -> StudentResponse.from(student, isFollowedByMe(userId, student.getUserId())))
                         .orElse(null))
                 .filter(Objects::nonNull)
                 .toList());
@@ -108,4 +109,8 @@ public class FollowService {
 
     }
 
+    private boolean isFollowedByMe(String myId, String followerId){
+        Optional<Follow> follow = followRepository.findByFollowerUserIdAndFollowingUserId(myId, followerId);
+        return follow.isPresent();
+    }
 }
