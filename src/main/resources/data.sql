@@ -41,6 +41,7 @@ insert into follow (id, follower_id, following_id, created_at, is_deleted) value
 insert into follow (id, follower_id, following_id, created_at, is_deleted) values (3, 2, 1, '2024-04-21 06:41:32', false);
 insert into follow (id, follower_id, following_id, created_at, is_deleted) values (4, 3, 1, '2023-11-30 00:34:41', false);
 insert into follow (id, follower_id, following_id, created_at, is_deleted) values (5, 5, 2, '2024-03-04 13:42:45', false);
+insert into follow (id, follower_id, following_id, created_at, is_deleted) values (6, 2, 5, '2024-03-04 13:42:45', false);
 
 insert into community (id, school_id, grade, my_class, created_at, updated_at, is_deleted) values (1, 1, 0, 0, '2024-01-12 10:31:14', '2024-10-22 11:11:30', true);
 insert into community (id, school_id, grade, my_class, created_at, updated_at, is_deleted) values (2, 2, 0, 0, '2024-03-01 14:17:55', '2024-04-01 04:35:25', false);
