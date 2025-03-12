@@ -39,8 +39,6 @@ public class SecurityConfig {
                         .requestMatchers("/auth/refresh").permitAll()
                         .requestMatchers("/auth/sendCode").permitAll()
                         .requestMatchers("/auth/verifyCode").permitAll()
-                        .requestMatchers("/follow/getFollowingList").permitAll()
-                        .requestMatchers("/follow/getFollowerList").permitAll()
                         .requestMatchers("/hashtag/getHashList").permitAll()
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .anyRequest().authenticated()

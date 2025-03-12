@@ -1,6 +1,7 @@
 package com.example.peep.controller;
 
 import com.example.peep.dto.StudentDto;
+import com.example.peep.dto.response.StudentDetailResponse;
 import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,9 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public ResponseEntity<StudentResponse> getStudent(@RequestParam("userId") String userId) {
-        return studentService.getStudent(userId);
+    public ResponseEntity<StudentDetailResponse> getStudent(@RequestHeader("Authorization") String token,
+                                                            @RequestParam("userId") String userId) {
+        return studentService.getStudent(token, userId);
     }
 
     @PostMapping("/new")
