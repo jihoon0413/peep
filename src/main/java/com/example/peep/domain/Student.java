@@ -1,5 +1,6 @@
 package com.example.peep.domain;
 
+import com.example.peep.domain.enumType.Gender;
 import com.example.peep.domain.mapping.StudentCommunity;
 import com.example.peep.domain.mapping.StudentCommunityQuestion;
 import com.example.peep.domain.mapping.StudentHashtag;
@@ -28,6 +29,9 @@ public class Student extends AuditingFields {
     @Setter @Column(name = "user_id", nullable = false, unique = true) private String userId;
     @Setter @Column @ToString.Exclude private String userPassword;
     @Setter @Column private String name;
+
+    @Enumerated(value = EnumType.STRING)
+    @Setter @Column private Gender gender;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @Setter
@@ -85,10 +89,11 @@ public class Student extends AuditingFields {
     @Setter @Column private String tel;
 
 
-    private Student (String userId, String userPassword, String name, School school, Coin coin, Photo photo, int grade, int myClass , String tel) {
+    private Student (String userId, String userPassword, String name, Gender gender, School school, Coin coin, Photo photo, int grade, int myClass , String tel) {
         this.userId = userId;
         this.userPassword = userPassword;
         this.name = name;
+        this.gender = gender;
         this.school = school;
         this.coin = coin;
         this.photo = photo;
@@ -97,8 +102,8 @@ public class Student extends AuditingFields {
         this.tel = tel;
     }
 
-    public static Student of(String userId, String userPassword, String name, School school, Coin coin, Photo photo, int grade, int myClass, String tel) {
-        return new Student(userId, userPassword, name, school, coin, photo, grade, myClass, tel);
+    public static Student of(String userId, String userPassword, String name, Gender gender, School school, Coin coin, Photo photo, int grade, int myClass, String tel) {
+        return new Student(userId, userPassword, name, gender, school, coin, photo, grade, myClass, tel);
     }
 
     @Override
