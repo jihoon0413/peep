@@ -63,24 +63,35 @@ public class FollowService {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<List<StudentResponse>> getFollowingList(String userId) {
+    public ResponseEntity<List<StudentResponse>> getFollowingList(String token, String userId) {
+        String myId = jwtTokenProvider.getUserId(token);
         return ResponseEntity.ok(followRepository.findAllByFollowerUserId(userId)
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollowing().getId())
                         .filter(student -> !student.getIsDeleted())
-                        .map(StudentResponse::from)
+                        .map(student -> {
+                            if(myId.equals(userId) || myId.equals(student.getUserId())) {
+                                return StudentResponse.from(student);
+                            }
+                            return StudentResponse.from(student, isFollowedByMe(myId, student.getUserId()));
+                        })
                         .orElse(null))
                 .filter(Objects::nonNull)
                 .toList());
     }
 
-    public ResponseEntity<List<StudentResponse>> getFollowerList(String userId) {
+    public ResponseEntity<List<StudentResponse>> getFollowerList(String token, String userId) {
+        String myId = jwtTokenProvider.getUserId(token);
         return ResponseEntity.ok(followRepository.findAllByFollowingUserId(userId)
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollower().getId())
                         .filter(student -> !student.getIsDeleted())
-                        .map(student -> StudentResponse.from(student, isFollowedByMe(userId, student.getUserId())))
-                        .orElse(null))
+                        .map(student -> {
+                            if(myId.equals(student.getUserId())) {
+                                return StudentResponse.from(student);
+                            }
+                            return StudentResponse.from(student, isFollowedByMe(myId, student.getUserId()));
+                        }).orElse(null))
                 .filter(Objects::nonNull)
                 .toList());
     }

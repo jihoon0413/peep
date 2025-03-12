@@ -30,13 +30,15 @@ public class FollowController {
     }
 
     @GetMapping("/getFollowingList")
-    public ResponseEntity<List<StudentResponse>> getFollowingList(@RequestParam("userId") String userId) {
-        return followService.getFollowingList(userId);
+    public ResponseEntity<List<StudentResponse>> getFollowingList(@RequestHeader("Authorization") String token,
+                                                                  @RequestParam("userId") String userId) {
+        return followService.getFollowingList(token, userId);
     }
 
     @GetMapping("/getFollowerList")
-    public ResponseEntity<List<StudentResponse>> getFollowerList(@RequestParam("userId") String userId) {
-        return followService.getFollowerList(userId);
+    public ResponseEntity<List<StudentResponse>> getFollowerList(@RequestHeader("Authorization") String token,
+                                                                 @RequestParam("userId") String userId) {
+        return followService.getFollowerList(token, userId);
     }
 
     @PostMapping("/block")

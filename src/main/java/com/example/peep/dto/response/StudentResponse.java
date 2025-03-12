@@ -9,9 +9,7 @@ public record StudentResponse(
     String name,
     PhotoDto photoDto,
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    Boolean isFollowedByMe,
-    int grade,
-    int myClass
+    Boolean isFollowedByMe
 ) {
 //        public static StudentResponse of(String userId, String name, int grade, int myClass) {
 //            return new StudentResponse(userId, name, null, grade, myClass);
@@ -26,9 +24,8 @@ public record StudentResponse(
                 student.getUserId(),
                 student.getName(),
                 PhotoDto.from(student.getPhoto()),
-                isFollowedByMe,
-                student.getGrade(),
-                student.getMyClass()
+                isFollowedByMe
+
         );
     }
 
