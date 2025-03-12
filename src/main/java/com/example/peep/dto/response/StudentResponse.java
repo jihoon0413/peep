@@ -21,25 +21,18 @@ public record StudentResponse(
 //            return new StudentResponse(userId, name, photoDto, grade, myClass);
 //        }
 
-        public static StudentResponse from(Student student, Boolean isFollowedByMe) {
-            return new StudentResponse(
-                    student.getUserId(),
-                    student.getName(),
-                    PhotoDto.from(student.getPhoto()),
-                    isFollowedByMe,
-                    student.getGrade(),
-                    student.getMyClass()
-            );
-        }
-
-    public static StudentResponse from(Student student) {
+    public static StudentResponse from(Student student, Boolean isFollowedByMe) {
         return new StudentResponse(
                 student.getUserId(),
                 student.getName(),
                 PhotoDto.from(student.getPhoto()),
-                null,
+                isFollowedByMe,
                 student.getGrade(),
                 student.getMyClass()
         );
     }
+
+    public static StudentResponse from(Student student) {
+            return from(student, null);
     }
+}
