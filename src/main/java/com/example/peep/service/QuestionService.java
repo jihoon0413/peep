@@ -116,7 +116,9 @@ public class QuestionService {
                     questionResponseList.add(ChosenQuestionResponse.of(studentCommunityQuestion.getId(),
                             QuestionDto.from(studentCommunityQuestion.getCommunityQuestion().getQuestion()),
                             studentCommunityQuestion.getUpdatedAt(),
-                            QuestionType.COMMON));
+                            QuestionType.COMMON,
+                            studentCommunityQuestion.getWriterInCommunity().getGender()
+                    ));
                 });
 
         studentQuestionRepository.findAllByChosenUserId(myId)
@@ -124,7 +126,9 @@ public class QuestionService {
                     questionResponseList.add(ChosenQuestionResponse.of(studentQuestion.getId(),
                             QuestionDto.from(studentQuestion.getQuestion()),
                             studentQuestion.getUpdatedAt(),
-                            QuestionType.RANDOM));
+                            QuestionType.RANDOM,
+                            studentQuestion.getWriter().getGender()
+                            ));
                 });
 
         questionResponseList.sort(Comparator.comparing(ChosenQuestionResponse::chosenDate).reversed());
