@@ -44,13 +44,13 @@ public class FollowController {
 
     @PostMapping("/block")
     public ResponseEntity<?> blockFollow(@RequestHeader("Authorization") String token,
-                                         @RequestParam("userId") String userId) {
-        return followService.blockFollow(token, userId);
+                                         @RequestBody FollowRequest followRequest) {
+        return followService.blockFollow(token, followRequest.userId());
     }
 
     @PostMapping("/unBlock")
     public ResponseEntity<?> unBlockFollow(@RequestHeader("Authorization") String token,
-                                           @RequestParam("userId") String userId) {
-        return followService.unBlockFollow(token, userId);
+                                           @RequestBody FollowRequest followRequest) {
+        return followService.unBlockFollow(token, followRequest.userId());
     }
 }
