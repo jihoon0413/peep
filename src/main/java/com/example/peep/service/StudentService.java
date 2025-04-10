@@ -76,8 +76,7 @@ public class StudentService {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> modifyStudent(String accessToken, StudentDto studentDto) {
-        String myId = jwtTokenProvider.getUserId(accessToken);
+    public ResponseEntity<Void> modifyStudent(String myId, StudentDto studentDto) {
         Student student = studentRepository.findByUserId(myId).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
         Photo photo = photoRepository.findById(student.getPhoto().getId()).orElseThrow();
         School school = schoolRepository.findById(studentDto.schoolDto().id()).orElseThrow();
@@ -99,9 +98,7 @@ public class StudentService {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> deleteStudent(String token) {
-
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<Void> deleteStudent(String myId) {
 
         Student student = studentRepository.findByUserId(myId).orElseThrow();
 
@@ -126,16 +123,14 @@ public class StudentService {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<List<StudentResponse>> getFourStudents(String token, Long communityId) {
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<List<StudentResponse>> getFourStudents(String myId, Long communityId) {
 
         return ResponseEntity.ok(studentRepository.findRandomFourStudents(communityId, myId)
                 .stream().map(StudentResponse::from)
                 .toList());
     }
 
-    public ResponseEntity<StudentDetailResponse> getStudent(String token, String userId) {
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<StudentDetailResponse> getStudent(String myId, String userId) {
         Student student = studentRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("Resource not exists"));
 
         int followerCount = followRepository.findAllByFollowingUserId(userId).size();

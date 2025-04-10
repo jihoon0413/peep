@@ -5,6 +5,7 @@ import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.service.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,40 +18,40 @@ public class FollowController {
     private final FollowService followService;
 
     @PostMapping("/newFollow")
-    public ResponseEntity<Void> newFollow(@RequestHeader("Authorization") String token,
-                                    @RequestBody FollowRequest followRequest
+    public ResponseEntity<Void> newFollow(Authentication authentication,
+                                          @RequestBody FollowRequest followRequest
     ) {
-        return followService.newFollow(token, followRequest.userId());
+        return followService.newFollow(authentication.getName(), followRequest.userId());
     }
 
     @PostMapping("/unFollow")
-    public ResponseEntity<Void> unFollow(@RequestHeader("Authorization") String token,
+    public ResponseEntity<Void> unFollow(Authentication authentication,
                                          @RequestBody FollowRequest followRequest
     ) {
-        return followService.unFollow(token, followRequest.userId());
+        return followService.unFollow(authentication.getName(), followRequest.userId());
     }
 
     @GetMapping("/getFollowingList")
-    public ResponseEntity<List<StudentResponse>> getFollowingList(@RequestHeader("Authorization") String token,
+    public ResponseEntity<List<StudentResponse>> getFollowingList(Authentication authentication,
                                                                   @RequestParam("userId") String userId) {
-        return followService.getFollowingList(token, userId);
+        return followService.getFollowingList(authentication.getName(), userId);
     }
 
     @GetMapping("/getFollowerList")
-    public ResponseEntity<List<StudentResponse>> getFollowerList(@RequestHeader("Authorization") String token,
+    public ResponseEntity<List<StudentResponse>> getFollowerList(Authentication authentication,
                                                                  @RequestParam("userId") String userId) {
-        return followService.getFollowerList(token, userId);
+        return followService.getFollowerList(authentication.getName(), userId);
     }
 
     @PostMapping("/block")
-    public ResponseEntity<?> blockFollow(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> blockFollow(Authentication authentication,
                                          @RequestBody FollowRequest followRequest) {
-        return followService.blockFollow(token, followRequest.userId());
+        return followService.blockFollow(authentication.getName(), followRequest.userId());
     }
 
     @PostMapping("/unBlock")
-    public ResponseEntity<?> unBlockFollow(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> unBlockFollow(Authentication authentication,
                                            @RequestBody FollowRequest followRequest) {
-        return followService.unBlockFollow(token, followRequest.userId());
+        return followService.unBlockFollow(authentication.getName(), followRequest.userId());
     }
 }

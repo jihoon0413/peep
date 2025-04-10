@@ -7,6 +7,7 @@ import com.example.peep.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -33,11 +34,10 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request,
                                          @RequestHeader("Device-Id") String deviceId,
-                                         @RequestHeader("Authorization") String accessToken) {
+                                         @RequestHeader("Authorization") String accessToken,
+                                         Authentication authentication) {
 
-        String oldAccess = accessToken.substring(7);
-
-        return authService.logout(request, deviceId, accessToken);
+        return authService.logout(request, deviceId, accessToken, authentication.getName());
 
     }
 

@@ -1,6 +1,5 @@
 package com.example.peep.service;
 
-import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.domain.Community;
 import com.example.peep.domain.Question;
 import com.example.peep.domain.Student;
@@ -12,8 +11,8 @@ import com.example.peep.domain.mapping.StudentQuestion;
 import com.example.peep.dto.CommunityQuestionDto;
 import com.example.peep.dto.QuestionDto;
 import com.example.peep.dto.StudentQuestionDto;
-import com.example.peep.dto.response.HomeQuestionListResponse;
 import com.example.peep.dto.response.ChosenQuestionResponse;
+import com.example.peep.dto.response.HomeQuestionListResponse;
 import com.example.peep.errors.errorcode.CustomErrorCode;
 import com.example.peep.errors.exception.RestApiException;
 import com.example.peep.repository.*;
@@ -34,7 +33,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class QuestionService {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final StudentRepository studentRepository;
     private final QuestionRepository questionRepository;
     private final CommunityRepository communityRepository;
@@ -43,8 +41,7 @@ public class QuestionService {
     private final StudentCommunityQuestionRepository studentCommunityQuestionRepository;
     private final StudentQuestionRepository studentQuestionRepository;
 
-    public ResponseEntity<Void> commonChooseStudent(String token, String userId, Long communityQuestionId) {
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<Void> commonChooseStudent(String myId, String userId, Long communityQuestionId) {
 
         Student writer = studentRepository.findByUserId(myId).orElseThrow();
 
@@ -60,9 +57,7 @@ public class QuestionService {
 
     }
 
-    public ResponseEntity<Void> randomChooseStudent(String token, String userId, Long studentQuestionId) {
-
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<Void> randomChooseStudent(String myId, String userId, Long studentQuestionId) {
 
         Student chosen = studentRepository.findByUserId(userId).orElseThrow();
 
@@ -79,9 +74,8 @@ public class QuestionService {
     }
 
 
-    public ResponseEntity<HomeQuestionListResponse> getQuestionList(String token) {
+    public ResponseEntity<HomeQuestionListResponse> getQuestionList(String myId) {
 
-        String myId = jwtTokenProvider.getUserId(token);
 
         List<StudentCommunity> studentCommunities = studentCommunityRepository.findAllByStudentUserId(myId);
 
@@ -106,8 +100,7 @@ public class QuestionService {
         return ResponseEntity.ok(homeResponse);
     }
 
-    public ResponseEntity<List<ChosenQuestionResponse>> getChosenQuestionList(String token) {
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<List<ChosenQuestionResponse>> getChosenQuestionList(String myId) {
 
         List<ChosenQuestionResponse> questionResponseList = new ArrayList<>();
 

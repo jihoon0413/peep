@@ -6,6 +6,7 @@ import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +19,9 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public ResponseEntity<StudentDetailResponse> getStudent(@RequestHeader("Authorization") String token,
+    public ResponseEntity<StudentDetailResponse> getStudent(Authentication authentication,
                                                             @RequestParam("userId") String userId) {
-        return studentService.getStudent(token, userId);
+        return studentService.getStudent(authentication.getName(), userId);
     }
 
     @PostMapping("/new")
@@ -29,18 +30,18 @@ public class StudentController {
     }
 
     @PostMapping("/modify")
-    public ResponseEntity<Void> modifyStudent(@RequestHeader("Authorization") String accessToken, @RequestBody StudentDto studentDto) {
-        return studentService.modifyStudent(accessToken, studentDto);
+    public ResponseEntity<Void> modifyStudent(Authentication authentication, @RequestBody StudentDto studentDto) {
+        return studentService.modifyStudent(authentication.getName(), studentDto);
     }
 
     @GetMapping("/delete")
-    public ResponseEntity<Void> deleteStudent(@RequestHeader("Authorization") String accessToken) {
-        return studentService.deleteStudent(accessToken);
+    public ResponseEntity<Void> deleteStudent(Authentication authentication) {
+        return studentService.deleteStudent(authentication.getName());
     }
 
     @GetMapping("/getFourStudents")
-    public ResponseEntity<List<StudentResponse>> getFourStudents(@RequestHeader("Authorization") String token,
+    public ResponseEntity<List<StudentResponse>> getFourStudents(Authentication authentication,
                                                  @RequestParam("communityId") Long communityId) {
-        return studentService.getFourStudents(token, communityId);
+        return studentService.getFourStudents(authentication.getName(), communityId);
     }
 }
