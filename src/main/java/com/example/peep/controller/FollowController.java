@@ -1,5 +1,6 @@
 package com.example.peep.controller;
 
+import com.example.peep.dto.request.FollowRequest;
 import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.service.FollowService;
 import lombok.RequiredArgsConstructor;
@@ -17,16 +18,16 @@ public class FollowController {
 
     @PostMapping("/newFollow")
     public ResponseEntity<Void> newFollow(@RequestHeader("Authorization") String token,
-                                    @RequestParam("userId") String userId
+                                    @RequestBody FollowRequest followRequest
     ) {
-        return followService.newFollow(token, userId);
+        return followService.newFollow(token, followRequest.userId());
     }
 
     @PostMapping("/unFollow")
     public ResponseEntity<Void> unFollow(@RequestHeader("Authorization") String token,
-                         @RequestParam("userId") String userId
+                                         @RequestBody FollowRequest followRequest
     ) {
-        return followService.unFollow(token, userId);
+        return followService.unFollow(token, followRequest.userId());
     }
 
     @GetMapping("/getFollowingList")
