@@ -5,6 +5,7 @@ import com.example.peep.domain.enumType.HashtagType;
 import com.example.peep.service.HashtagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,22 +23,22 @@ public class HashtagController {
     }
 
     @GetMapping("/getMyHashtag")
-    public ResponseEntity<List<HashtagDto>> getMyHashtag(@RequestHeader("Authorization") String token) {
-        return hashtagService.getMyHashtag(token);
+    public ResponseEntity<List<HashtagDto>> getMyHashtag(Authentication authentication) {
+        return hashtagService.getMyHashtag(authentication.getName());
     }
 
     @PostMapping("/setMyHashtag")
     public ResponseEntity<Void> setMyHashtag(
-            @RequestHeader("Authorization") String token,
+            Authentication authentication,
             @RequestBody List<HashtagDto> hashtagDtoList) {
-        return hashtagService.setMyHashtag(token, hashtagDtoList);
+        return hashtagService.setMyHashtag(authentication.getName(), hashtagDtoList);
     }
 
     @PostMapping("/deleteMyHashtag")
     public ResponseEntity<Void> deleteMyHashtag(
-            @RequestHeader("Authorization") String token,
+            Authentication authentication,
             @RequestBody List<HashtagDto> hashtagDtoList) {
-        return hashtagService.deleteMyHashtag(token, hashtagDtoList);
+        return hashtagService.deleteMyHashtag(authentication.getName(), hashtagDtoList);
     }
 
 }

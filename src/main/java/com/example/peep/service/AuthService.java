@@ -78,8 +78,6 @@ public class AuthService {
     public ResponseEntity<String> logout(HttpServletRequest request, String deviceId, String oldAccess, String id) {
 
         String accessToken = oldAccess.substring(7);
-//        String id = jwtTokenProvider.getUserId(oldAccess);
-
 
         recordEvent(request, id, Event.LOG_OUT);
 

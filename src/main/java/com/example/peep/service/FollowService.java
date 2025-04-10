@@ -31,9 +31,7 @@ public class FollowService {
     private final JwtTokenProvider jwtTokenProvider;
     private final BlockRepository blockRepository;
 
-    public ResponseEntity<Void> newFollow(String token, String userId) {
-
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<Void> newFollow(String myId, String userId) {
 
 
         Follow followRecord = followRepository.findByFollowerUserIdAndFollowingUserId(myId, userId).orElse(null);
@@ -52,9 +50,7 @@ public class FollowService {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> unFollow(String token, String userId) {
-
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<Void> unFollow(String myId, String userId) {
 
         Follow follow = followRepository.findByFollowerUserIdAndFollowingUserId(myId, userId).orElseThrow();
         follow.setIsDeleted(true);
@@ -63,8 +59,8 @@ public class FollowService {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<List<StudentResponse>> getFollowingList(String token, String userId) {
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<List<StudentResponse>> getFollowingList(String myId, String userId) {
+
         return ResponseEntity.ok(followRepository.findAllByFollowerUserId(userId)
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollowing().getId())
@@ -80,8 +76,7 @@ public class FollowService {
                 .toList());
     }
 
-    public ResponseEntity<List<StudentResponse>> getFollowerList(String token, String userId) {
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<List<StudentResponse>> getFollowerList(String myId, String userId) {
         return ResponseEntity.ok(followRepository.findAllByFollowingUserId(userId)
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollower().getId())
@@ -96,9 +91,7 @@ public class FollowService {
                 .toList());
     }
 
-    public ResponseEntity<?> blockFollow(String token, String userId) {
-
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<?> blockFollow(String myId, String userId) {
 
         Student blocker = studentRepository.findByUserId(myId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
         Student blocked = studentRepository.findByUserId(userId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
@@ -110,9 +103,7 @@ public class FollowService {
         return ResponseEntity.ok("Block");
     }
 
-    public ResponseEntity<?> unBlockFollow(String token, String userId) {
-
-        String myId = jwtTokenProvider.getUserId(token);
+    public ResponseEntity<?> unBlockFollow(String myId, String userId) {
 
         blockRepository.deleteByBlockerUserIdAndBlockedUserId(myId, userId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
 

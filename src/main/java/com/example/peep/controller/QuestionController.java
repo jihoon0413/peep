@@ -1,12 +1,13 @@
 package com.example.peep.controller;
 
-import com.example.peep.dto.CommunityQuestionDto;
-import com.example.peep.dto.StudentQuestionDto;
-import com.example.peep.dto.response.HomeQuestionListResponse;
+
+import com.example.peep.dto.request.PointStudentRequest;
 import com.example.peep.dto.response.ChosenQuestionResponse;
+import com.example.peep.dto.response.HomeQuestionListResponse;
 import com.example.peep.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,27 +19,25 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    @PostMapping("/commonChoice/{userId}")
-    public ResponseEntity<Void> commonChooseStudent(@RequestHeader("Authorization") String token,
-                                        @PathVariable("userId") String userId,
-                                        @RequestBody CommunityQuestionDto communityQuestionDto) {
-        return questionService.commonChooseStudent(token, userId, communityQuestionDto.id());
+    @PostMapping("/commonChoice")
+    public ResponseEntity<Void> commonChooseStudent(Authentication authentication,
+                                                    @RequestBody PointStudentRequest pointStudentRequest) {
+        return questionService.commonChooseStudent(authentication.getName(), pointStudentRequest.studentId(), pointStudentRequest.questionId());
     }
 
-    @PostMapping("/randomChoice/{userId}")
-    public ResponseEntity<Void> randomChooseStudent(@RequestHeader("Authorization") String token,
-                                                    @PathVariable("userId") String uerId,
-                                                    @RequestBody StudentQuestionDto studentQuestionDto) {
-        return questionService.randomChooseStudent(token, uerId, studentQuestionDto.id());
+    @PostMapping("/randomChoice")
+    public ResponseEntity<Void> randomChooseStudent(Authentication authentication,
+                                                    @RequestBody PointStudentRequest pointStudentRequest) {
+        return questionService.randomChooseStudent(authentication.getName(), pointStudentRequest.studentId(), pointStudentRequest.questionId());
     }
 
     @GetMapping("/getQuestionList")
-    public ResponseEntity<HomeQuestionListResponse> getQuestionList(@RequestHeader("Authorization") String token) {
-        return questionService.getQuestionList(token);
+    public ResponseEntity<HomeQuestionListResponse> getQuestionList(Authentication authentication) {
+        return questionService.getQuestionList(authentication.getName());
     }
 
     @GetMapping("/getChosenQuestionList")
-    public ResponseEntity<List<ChosenQuestionResponse>> getChosenQuestionList(@RequestHeader("Authorization") String token) {
-        return questionService.getChosenQuestionList(token);
+    public ResponseEntity<List<ChosenQuestionResponse>> getChosenQuestionList(Authentication authentication) {
+        return questionService.getChosenQuestionList(authentication.getName());
     }
 }
