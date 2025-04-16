@@ -6,7 +6,12 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum CustomErrorCode implements ErrorCode {
+public enum ErrorCode {
+
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token is invalid"),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not founded"),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "Password is invalid"),
+
 
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "Invalid parameter included"),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Cannot find resource."),
