@@ -1,32 +1,23 @@
-package com.example.peep.dto;
+package com.example.peep.dto.response;
 
 import com.example.peep.config.jwt.JwtToken;
 
-public record JwtTokenDto(
+public record JwtTokenResponse(
         String grantType,
         String accessToken,
         String refreshToken,
         String id
 ) {
-    public static JwtTokenDto of(String grantType, String accessToken, String refreshToken, String userId) {
-        return new JwtTokenDto(grantType, accessToken, refreshToken, userId);
+    public static JwtTokenResponse of(String grantType, String accessToken, String refreshToken, String userId) {
+        return new JwtTokenResponse(grantType, accessToken, refreshToken, userId);
     }
 
-    public static JwtTokenDto from(JwtToken jwtToken) {
-        return new JwtTokenDto(
+    public static JwtTokenResponse from(JwtToken jwtToken) {
+        return new JwtTokenResponse(
                 jwtToken.getGrantType(),
                 jwtToken.getAccessToken(),
                 jwtToken.getRefreshToken(),
                 jwtToken.getId()
-        );
-    }
-
-    public JwtToken toEntity() {
-        return JwtToken.of(
-                grantType,
-                accessToken,
-                refreshToken,
-                id
         );
     }
 

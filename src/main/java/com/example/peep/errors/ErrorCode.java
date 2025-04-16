@@ -1,4 +1,4 @@
-package com.example.peep.errors.errorcode;
+package com.example.peep.errors;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token is invalid"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not founded"),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "Password is invalid"),
+    ALREADY_LOGGED_IN(HttpStatus.CONFLICT,"User is already logged in"),
 
 
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "Invalid parameter included"),

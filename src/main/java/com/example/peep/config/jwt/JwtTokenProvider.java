@@ -41,22 +41,22 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
-    public JwtToken generateToken(Authentication authentication, String id, String deviceId) {
+    public JwtToken generateToken(String userId, String deviceId) {
 
         long now = (new Date()).getTime();
         Date refreshTokenExpiresIn = new Date(now + refreshExpiration);
 
-        String accessToken = generateAccess(authentication.getName());
+        String accessToken = generateAccess(userId);
         String refreshToken = generateRefresh(refreshTokenExpiresIn);
 
-        RefreshToken refresh = RefreshToken.of(authentication.getName(),deviceId, refreshToken, refreshTokenExpiresIn);
+        RefreshToken refresh = RefreshToken.of(userId, deviceId, refreshToken, refreshTokenExpiresIn);
         saveRefresh(refresh);
 
         return JwtToken.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .id(id)
+                .id(userId)
                 .build();
     }
 
