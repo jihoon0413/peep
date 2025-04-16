@@ -23,4 +23,16 @@ public record Response<T>(
         return new Response<String>(errorCode.name(), msg);
     }
 
+    public String toStream() {
+        if(result == null) {
+            return "{" +
+                    "\"resultCode\":" + "\"" + resultCode + "\"," +
+                    "\"result\":" + null + "}";
+        }
+
+        return "{" +
+                "\"resultCode\":" + "\"" + resultCode + "\"," +
+                "\"result\":" + "\"" + result + "\"" + "}";
+    }
+
 }

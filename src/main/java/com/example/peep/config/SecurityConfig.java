@@ -2,6 +2,7 @@ package com.example.peep.config;
 
 import com.example.peep.config.jwt.JwtAuthenticationFilter;
 import com.example.peep.config.jwt.JwtTokenProvider;
+import com.example.peep.errors.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +45,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling((exceptionConfig) ->
+                    exceptionConfig.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                )
                 .build();
     }
 

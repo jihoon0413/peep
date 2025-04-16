@@ -1,5 +1,7 @@
 package com.example.peep.config.jwt;
 
+import com.example.peep.dto.response.Response;
+import com.example.peep.errors.PeepApiException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,9 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
         String token = resolveToken(servletRequest);
-        log.info("JwtAuthenticationFilter 실행");
-        // 토큰 유효성 검사
-        if (token!=null && jwtTokenProvider.validateToken(token)) {
+
+
+        if (token != null && jwtTokenProvider.validateToken(token)) {
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
