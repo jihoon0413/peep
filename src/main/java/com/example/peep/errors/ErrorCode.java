@@ -11,10 +11,12 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token is invalid"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not founded"),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "Password is invalid"),
-    ALREADY_LOGGED_IN(HttpStatus.CONFLICT,"User is already logged in"),
-
-
+    ALREADY_EXECUTION(HttpStatus.CONFLICT,"User is already execution this request"),
+    EMPTY_PARAMETER(HttpStatus.NOT_FOUND, "Empty parameter"),
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "Invalid parameter included"),
+    FORBIDDEN(HttpStatus.FORBIDDEN,"Forbidden"),
+
+
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Cannot find resource."),
     WRONG_VERIFICATION_CODE(HttpStatus.UNAUTHORIZED, "Wrong verificationCode");
 

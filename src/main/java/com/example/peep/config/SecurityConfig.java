@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/","/login","/loginForm","/joinForm").permitAll()
                         .requestMatchers("/students/new").permitAll()
+                        .requestMatchers("/students/isDuplicated").permitAll()
                         .requestMatchers("/schools/getList").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/refresh").permitAll()

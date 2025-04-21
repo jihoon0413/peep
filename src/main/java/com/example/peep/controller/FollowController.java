@@ -1,10 +1,11 @@
 package com.example.peep.controller;
 
-import com.example.peep.dto.request.FollowRequest;
+import com.example.peep.dto.request.UserIdRequest;
+import com.example.peep.dto.response.Response;
 import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.service.FollowService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,40 +19,40 @@ public class FollowController {
     private final FollowService followService;
 
     @PostMapping("/newFollow")
-    public ResponseEntity<Void> newFollow(Authentication authentication,
-                                          @RequestBody FollowRequest followRequest
+    public Response<String> newFollow(Authentication authentication,
+                                          @RequestBody UserIdRequest followRequest
     ) {
-        return followService.newFollow(authentication.getName(), followRequest.userId());
+        return Response.success(followService.newFollow(authentication.getName(), followRequest.userId()));
     }
 
     @PostMapping("/unFollow")
-    public ResponseEntity<Void> unFollow(Authentication authentication,
-                                         @RequestBody FollowRequest followRequest
+    public Response<String> unFollow(Authentication authentication,
+                                         @RequestBody UserIdRequest followRequest
     ) {
-        return followService.unFollow(authentication.getName(), followRequest.userId());
+        return Response.success(followService.unFollow(authentication.getName(), followRequest.userId()));
     }
 
     @GetMapping("/getFollowingList")
-    public ResponseEntity<List<StudentResponse>> getFollowingList(Authentication authentication,
-                                                                  @RequestParam("userId") String userId) {
-        return followService.getFollowingList(authentication.getName(), userId);
+    public Response<List<StudentResponse>> getFollowingList(Authentication authentication,
+                                                            @RequestParam("userId") String userId, Pageable pageable) {
+        return Response.success(followService.getFollowingList(authentication.getName(), userId, pageable));
     }
 
     @GetMapping("/getFollowerList")
-    public ResponseEntity<List<StudentResponse>> getFollowerList(Authentication authentication,
-                                                                 @RequestParam("userId") String userId) {
-        return followService.getFollowerList(authentication.getName(), userId);
+    public Response<List<StudentResponse>> getFollowerList(Authentication authentication,
+                                                                 @RequestParam("userId") String userId, Pageable pageable) {
+        return Response.success(followService.getFollowerList(authentication.getName(), userId, pageable));
     }
 
     @PostMapping("/block")
-    public ResponseEntity<?> blockFollow(Authentication authentication,
-                                         @RequestBody FollowRequest followRequest) {
-        return followService.blockFollow(authentication.getName(), followRequest.userId());
+    public Response<String> blockFollow(Authentication authentication,
+                                         @RequestBody UserIdRequest followRequest) {
+        return Response.success(followService.blockFollow(authentication.getName(), followRequest.userId()));
     }
 
     @PostMapping("/unBlock")
-    public ResponseEntity<?> unBlockFollow(Authentication authentication,
-                                           @RequestBody FollowRequest followRequest) {
-        return followService.unBlockFollow(authentication.getName(), followRequest.userId());
+    public Response<String> unBlockFollow(Authentication authentication,
+                                           @RequestBody UserIdRequest followRequest) {
+        return Response.success(followService.unBlockFollow(authentication.getName(), followRequest.userId()));
     }
 }

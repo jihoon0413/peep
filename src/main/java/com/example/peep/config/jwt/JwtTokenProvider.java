@@ -1,13 +1,11 @@
 package com.example.peep.config.jwt;
 
 import com.example.peep.domain.RefreshToken;
-import com.example.peep.errors.ErrorCode;
-import com.example.peep.errors.PeepApiException;
 import com.example.peep.repository.RefreshTokenRepository;
 import com.example.peep.service.TokenBlacklistService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
-import kotlinx.serialization.StringFormat;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +15,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
 import java.util.Arrays;

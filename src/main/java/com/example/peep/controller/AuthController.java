@@ -1,13 +1,12 @@
 package com.example.peep.controller;
 
-import com.example.peep.dto.response.JwtTokenResponse;
 import com.example.peep.dto.request.LoginRequest;
 import com.example.peep.dto.request.VerifyCodeRequestDto;
+import com.example.peep.dto.response.JwtTokenResponse;
 import com.example.peep.dto.response.Response;
 import com.example.peep.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,10 +1,10 @@
 package com.example.peep.controller;
 
-import com.example.peep.dto.HashtagDto;
 import com.example.peep.domain.enumType.HashtagType;
+import com.example.peep.dto.HashtagDto;
+import com.example.peep.dto.response.Response;
 import com.example.peep.service.HashtagService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,27 +18,27 @@ public class HashtagController {
     private final HashtagService hashtagService;
 
     @GetMapping("/getHashList")
-    public ResponseEntity<List<HashtagDto>> getHashList(@RequestParam("type") String type) {
-        return hashtagService.getHashList(HashtagType.valueOf(type));
+    public Response<List<HashtagDto>> getHashList(@RequestParam("type") String type) {
+        return Response.success(hashtagService.getHashList(HashtagType.valueOf(type)));
     }
 
     @GetMapping("/getMyHashtag")
-    public ResponseEntity<List<HashtagDto>> getMyHashtag(Authentication authentication) {
-        return hashtagService.getMyHashtag(authentication.getName());
+    public Response<List<HashtagDto>> getMyHashtag(Authentication authentication) {
+        return Response.success(hashtagService.getMyHashtag(authentication.getName()));
     }
 
     @PostMapping("/setMyHashtag")
-    public ResponseEntity<Void> setMyHashtag(
+    public Response<String> setMyHashtag(
             Authentication authentication,
             @RequestBody List<HashtagDto> hashtagDtoList) {
-        return hashtagService.setMyHashtag(authentication.getName(), hashtagDtoList);
+        return Response.success(hashtagService.setMyHashtag(authentication.getName(), hashtagDtoList));
     }
 
     @PostMapping("/deleteMyHashtag")
-    public ResponseEntity<Void> deleteMyHashtag(
+    public Response<String> deleteMyHashtag(
             Authentication authentication,
             @RequestBody List<HashtagDto> hashtagDtoList) {
-        return hashtagService.deleteMyHashtag(authentication.getName(), hashtagDtoList);
+        return Response.success(hashtagService.deleteMyHashtag(authentication.getName(), hashtagDtoList));
     }
 
 }

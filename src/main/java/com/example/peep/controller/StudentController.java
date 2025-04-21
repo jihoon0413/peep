@@ -1,11 +1,12 @@
 package com.example.peep.controller;
 
 import com.example.peep.dto.StudentDto;
+import com.example.peep.dto.request.UserIdRequest;
+import com.example.peep.dto.response.Response;
 import com.example.peep.dto.response.StudentDetailResponse;
 import com.example.peep.dto.response.StudentResponse;
 import com.example.peep.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,29 +20,36 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public ResponseEntity<StudentDetailResponse> getStudent(Authentication authentication,
+    public Response<StudentDetailResponse> getStudent(Authentication authentication,
                                                             @RequestParam("userId") String userId) {
-        return studentService.getStudent(authentication.getName(), userId);
+        return Response.success(studentService.getStudent(authentication.getName(), userId));
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Void> newStudent(@RequestBody StudentDto studentDto) {
-        return studentService.newStudent(studentDto);
+    public Response<String> newStudent(@RequestBody StudentDto studentDto) {
+        return Response.success(studentService.newStudent(studentDto));
     }
+
+    @PostMapping("/isDuplicated")
+    public Response<Boolean> isDuplicated(@RequestBody UserIdRequest userId) {
+        return Response.success(studentService.isDuplicated(userId.userId()));
+    }
+
 
     @PostMapping("/modify")
-    public ResponseEntity<Void> modifyStudent(Authentication authentication, @RequestBody StudentDto studentDto) {
-        return studentService.modifyStudent(authentication.getName(), studentDto);
+    public Response<String> modifyStudent(Authentication authentication, @RequestBody StudentDto studentDto) {
+        return Response.success(studentService.modifyStudent(authentication.getName(), studentDto));
     }
 
-    @GetMapping("/delete")
-    public ResponseEntity<Void> deleteStudent(Authentication authentication) {
-        return studentService.deleteStudent(authentication.getName());
+    @PostMapping("/delete")
+    public Response<String> deleteStudent(Authentication authentication) {
+        return Response.success(studentService.deleteStudent(authentication.getName()));
     }
+//  TODO: 탈퇴계정 복구 방법 고민  @PostMapping("/restore")
 
     @GetMapping("/getFourStudents")
-    public ResponseEntity<List<StudentResponse>> getFourStudents(Authentication authentication,
+    public Response<List<StudentResponse>> getFourStudents(Authentication authentication,
                                                  @RequestParam("communityId") Long communityId) {
-        return studentService.getFourStudents(authentication.getName(), communityId);
+        return Response.success(studentService.getFourStudents(authentication.getName(), communityId));
     }
 }

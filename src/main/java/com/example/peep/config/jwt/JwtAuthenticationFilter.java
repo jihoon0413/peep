@@ -1,7 +1,5 @@
 package com.example.peep.config.jwt;
 
-import com.example.peep.dto.response.Response;
-import com.example.peep.errors.PeepApiException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

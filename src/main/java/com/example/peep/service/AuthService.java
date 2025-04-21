@@ -9,7 +9,6 @@ import com.example.peep.domain.enumType.Event;
 import com.example.peep.dto.response.JwtTokenResponse;
 import com.example.peep.dto.request.LoginRequest;
 import com.example.peep.dto.request.VerifyCodeRequestDto;
-import com.example.peep.dto.response.Response;
 import com.example.peep.errors.ErrorCode;
 import com.example.peep.errors.PeepApiException;
 import com.example.peep.repository.RefreshTokenRepository;
@@ -18,12 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -54,7 +49,7 @@ public class AuthService {
 
         RefreshToken refreshToken = refreshTokenRepository.findByUserIdAndDeviceId(student.getUserId(), request.getHeader("Device-Id"));
         if(refreshToken != null) {
-            throw new PeepApiException(ErrorCode.ALREADY_LOGGED_IN, String.format("%s is already logged in to this device", student.getUserId()));
+            throw new PeepApiException(ErrorCode.ALREADY_EXECUTION, String.format("%s is already logged in to this device", student.getUserId()));
         }
         return JwtTokenResponse.from(jwtTokenProvider.generateToken(student.getUserId(), request.getHeader("Device-Id")));
     }

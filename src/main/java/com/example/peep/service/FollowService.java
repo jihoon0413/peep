@@ -1,19 +1,18 @@
 package com.example.peep.service;
 
-import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.domain.Block;
 import com.example.peep.domain.Follow;
 import com.example.peep.domain.Student;
 import com.example.peep.dto.response.StudentResponse;
-import com.example.peep.errors.errorcode.CommonErrorCode;
-import com.example.peep.errors.exception.RestApiException;
+import com.example.peep.errors.ErrorCode;
+import com.example.peep.errors.PeepApiException;
 import com.example.peep.repository.BlockRepository;
 import com.example.peep.repository.FollowRepository;
 import com.example.peep.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,40 +27,41 @@ public class FollowService {
 
     private final StudentRepository studentRepository;
     private final FollowRepository followRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final BlockRepository blockRepository;
 
-    public ResponseEntity<Void> newFollow(String myId, String userId) {
-
+    public String newFollow(String myId, String userId) {
 
         Follow followRecord = followRepository.findByFollowerUserIdAndFollowingUserId(myId, userId).orElse(null);
         Block block = blockRepository.findByBlockerUserIdAndBlockedUserId(userId, myId).orElse(null);
 
-        if(followRecord == null && block == null) {
-            Student follower = studentRepository.findByUserId(myId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 접근입니다."));
-            Student following = studentRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 접근입니다."));
-            if(!following.getIsDeleted()) {
-                Follow follow = Follow.of(follower, following);
-                followRepository.save(follow);
-            } else {
-                throw new IllegalArgumentException("존재하지 않은 계정입니다.");
-            }
+        if(block != null) {
+            throw new PeepApiException(ErrorCode.FORBIDDEN);
         }
-        return ResponseEntity.noContent().build();
+        if(followRecord != null) {
+            throw new PeepApiException(ErrorCode.ALREADY_EXECUTION);
+        }
+
+        Student follower = studentRepository.findByUserId(myId).orElseThrow(() -> new PeepApiException(ErrorCode.USER_NOT_FOUND));
+        Student following = studentRepository.findByUserId(userId).orElseThrow(() -> new PeepApiException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", userId)));
+        if(!following.getIsDeleted()) {
+            Follow follow = Follow.of(follower, following);
+            followRepository.save(follow);
+        } else {
+            throw new PeepApiException(ErrorCode.USER_NOT_FOUND);
+        }
+        return "Success Following [" + userId + "]";
     }
 
-    public ResponseEntity<Void> unFollow(String myId, String userId) {
+    public String unFollow(String myId, String userId) {
 
-        Follow follow = followRepository.findByFollowerUserIdAndFollowingUserId(myId, userId).orElseThrow();
-        follow.setIsDeleted(true);
-        followRepository.save(follow);
+        followRepository.deleteByFollowerUserIdAndFollowingUserId(myId, userId).orElseThrow(() -> new PeepApiException(ErrorCode.INVALID_PARAMETER));
 
-        return ResponseEntity.noContent().build();
+        return "UnFollow [" + userId + "]";
     }
 
-    public ResponseEntity<List<StudentResponse>> getFollowingList(String myId, String userId) {
+    public List<StudentResponse> getFollowingList(String myId, String userId, Pageable pageable) {
 
-        return ResponseEntity.ok(followRepository.findAllByFollowerUserId(userId)
+        return followRepository.findAllByFollowerUserId(userId, pageable)
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollowing().getId())
                         .filter(student -> !student.getIsDeleted())
@@ -73,11 +73,11 @@ public class FollowService {
                         })
                         .orElse(null))
                 .filter(Objects::nonNull)
-                .toList());
+                .toList();
     }
 
-    public ResponseEntity<List<StudentResponse>> getFollowerList(String myId, String userId) {
-        return ResponseEntity.ok(followRepository.findAllByFollowingUserId(userId)
+    public List<StudentResponse> getFollowerList(String myId, String userId, Pageable pageable) {
+        return followRepository.findAllByFollowingUserId(userId, pageable)
                 .stream()
                 .map(follow -> studentRepository.findById(follow.getFollower().getId())
                         .filter(student -> !student.getIsDeleted())
@@ -88,26 +88,26 @@ public class FollowService {
                             return StudentResponse.from(student, isFollowedByMe(myId, student.getUserId()));
                         }).orElse(null))
                 .filter(Objects::nonNull)
-                .toList());
+                .toList();
     }
 
-    public ResponseEntity<?> blockFollow(String myId, String userId) {
+    public String blockFollow(String myId, String userId) {
 
-        Student blocker = studentRepository.findByUserId(myId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
-        Student blocked = studentRepository.findByUserId(userId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
+        Student blocker = studentRepository.findByUserId(myId).orElseThrow(() -> new PeepApiException(ErrorCode.RESOURCE_NOT_FOUND, ""));
+        Student blocked = studentRepository.findByUserId(userId).orElseThrow(() -> new PeepApiException(ErrorCode.RESOURCE_NOT_FOUND, ""));
 
         Block block = Block.of(blocker, blocked);
 
         blockRepository.save(block);
 
-        return ResponseEntity.ok("Block");
+        return "Success block [" + userId + "]";
     }
 
-    public ResponseEntity<?> unBlockFollow(String myId, String userId) {
+    public String unBlockFollow(String myId, String userId) {
 
-        blockRepository.deleteByBlockerUserIdAndBlockedUserId(myId, userId).orElseThrow(() -> new RestApiException(CommonErrorCode.RESOURCE_NOT_FOUND));
+        blockRepository.deleteByBlockerUserIdAndBlockedUserId(myId, userId).orElseThrow(() -> new PeepApiException(ErrorCode.RESOURCE_NOT_FOUND, ""));
 
-        return ResponseEntity.ok("unBlock");
+        return "Success unblock [" + userId + "]";
 
     }
 

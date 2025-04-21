@@ -1,12 +1,13 @@
 package com.example.peep.controller;
 
 
+import com.example.peep.dto.request.HintRequest;
 import com.example.peep.dto.request.PointStudentRequest;
 import com.example.peep.dto.response.ChosenQuestionResponse;
 import com.example.peep.dto.response.HomeQuestionListResponse;
+import com.example.peep.dto.response.Response;
 import com.example.peep.service.QuestionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,25 +20,38 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    @PostMapping("/commonChoice")
-    public ResponseEntity<Void> commonChooseStudent(Authentication authentication,
+    @PostMapping("/choiceCommon")
+    public Response<String> commonChooseStudent(Authentication authentication,
                                                     @RequestBody PointStudentRequest pointStudentRequest) {
-        return questionService.commonChooseStudent(authentication.getName(), pointStudentRequest.studentId(), pointStudentRequest.questionId());
+        return Response.success(questionService.commonChooseStudent(authentication.getName(), pointStudentRequest.studentId(), pointStudentRequest.questionId()));
     }
 
-    @PostMapping("/randomChoice")
-    public ResponseEntity<Void> randomChooseStudent(Authentication authentication,
+    @PostMapping("/choiceRandom")
+    public Response<String> randomChooseStudent(Authentication authentication,
                                                     @RequestBody PointStudentRequest pointStudentRequest) {
-        return questionService.randomChooseStudent(authentication.getName(), pointStudentRequest.studentId(), pointStudentRequest.questionId());
+        return Response.success(questionService.randomChooseStudent(authentication.getName(), pointStudentRequest.studentId(), pointStudentRequest.questionId()));
     }
 
     @GetMapping("/getQuestionList")
-    public ResponseEntity<HomeQuestionListResponse> getQuestionList(Authentication authentication) {
-        return questionService.getQuestionList(authentication.getName());
+    public Response<HomeQuestionListResponse> getQuestionList(Authentication authentication) {
+        return Response.success(questionService.getQuestionList(authentication.getName()));
     }
 
     @GetMapping("/getChosenQuestionList")
-    public ResponseEntity<List<ChosenQuestionResponse>> getChosenQuestionList(Authentication authentication) {
-        return questionService.getChosenQuestionList(authentication.getName());
+    public Response<List<ChosenQuestionResponse>> getChosenQuestionList(Authentication authentication) {
+        return Response.success(questionService.getChosenQuestionList(authentication.getName()));
     }
+
+    @PostMapping("/getHintCommonQuestionWriter")
+    public Response<String> getCommonQuestionWriterHint(Authentication authentication,
+                                                        @RequestBody HintRequest hintRequest) {
+        return Response.success(questionService.getCommonQuestionWriterHint(authentication.getName(), hintRequest.questionId()));
+    }
+
+    @PostMapping("/getHintRandomQuestionWriter")
+    public Response<String> getRandomQuestionWriterHint(Authentication authentication,
+                                                        @RequestBody HintRequest hintRequest) {
+        return Response.success(questionService.getRandomQuestionWriterHint(authentication.getName(), hintRequest.questionId()));
+    }
+
 }
