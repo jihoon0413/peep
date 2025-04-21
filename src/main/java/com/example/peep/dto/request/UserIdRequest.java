@@ -1,6 +1,6 @@
 package com.example.peep.dto.request;
 
-public record FollowRequest(
+public record UserIdRequest(
         String userId
 ) {
 }

@@ -19,7 +19,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         )\s
         AND s.user_id != ?
         ORDER BY RAND()
-        LIMIT 2
+        LIMIT 4
 """, nativeQuery = true)
     List<Student> findRandomFourStudents(Long communityId, String currentUserId);
 }

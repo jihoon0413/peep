@@ -2,6 +2,7 @@ package com.example.peep.config;
 
 import com.example.peep.config.jwt.JwtAuthenticationFilter;
 import com.example.peep.config.jwt.JwtTokenProvider;
+import com.example.peep.errors.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/","/login","/loginForm","/joinForm").permitAll()
                         .requestMatchers("/students/new").permitAll()
+                        .requestMatchers("/students/isDuplicated").permitAll()
                         .requestMatchers("/schools/getList").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/refresh").permitAll()
@@ -44,6 +46,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling((exceptionConfig) ->
+                    exceptionConfig.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                )
                 .build();
     }
 

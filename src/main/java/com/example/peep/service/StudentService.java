@@ -12,14 +12,11 @@ import com.example.peep.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +36,7 @@ public class StudentService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<Void> newStudent(StudentDto studentDto) {
+    public String newStudent(StudentDto studentDto) {
 
         School school = schoolRepository.getReferenceById(studentDto.schoolDto().id());
         Coin coin = Coin.of(0);
@@ -73,10 +70,10 @@ public class StudentService {
         StudentCommunity studentCommunity = StudentCommunity.of(student, community);
         studentCommunityRepository.save(studentCommunity);
 
-        return ResponseEntity.noContent().build();
+        return "Success create new Student. Welcome to join us";
     }
 
-    public ResponseEntity<Void> modifyStudent(String myId, StudentDto studentDto) {
+    public String modifyStudent(String myId, StudentDto studentDto) {
         Student student = studentRepository.findByUserId(myId).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 아이디입니다."));
         Photo photo = photoRepository.findById(student.getPhoto().getId()).orElseThrow();
         School school = schoolRepository.findById(studentDto.schoolDto().id()).orElseThrow();
@@ -95,24 +92,14 @@ public class StudentService {
 
         studentRepository.save(student);
 
-        return ResponseEntity.noContent().build();
+        return "Success modify your info";
     }
 
-    public ResponseEntity<Void> deleteStudent(String myId) {
+    public String deleteStudent(String myId) {
 
         Student student = studentRepository.findByUserId(myId).orElseThrow();
 
-        followRepository.findAllByFollowerUserId(student.getUserId())
-                .forEach(follow -> {
-                    follow.setIsDeleted(true);
-                    followRepository.save(follow);
-                });
-
-        followRepository.findAllByFollowingUserId(student.getUserId())
-                .forEach(follow -> {
-                    follow.setIsDeleted(true);
-                    followRepository.save(follow);
-                });
+        followRepository.softDeleteAllByUserId(student.getId());
 
         student.setIsDeleted(true);
         student.getCoin().setIsDeleted(true);
@@ -120,21 +107,22 @@ public class StudentService {
 
         studentRepository.save(student);
 
-        return ResponseEntity.noContent().build();
+        return "Success delete [" + myId+"]";
     }
 
-    public ResponseEntity<List<StudentResponse>> getFourStudents(String myId, Long communityId) {
+    public List<StudentResponse> getFourStudents(String myId, Long communityId) {
 
-        return ResponseEntity.ok(studentRepository.findRandomFourStudents(communityId, myId)
+        return studentRepository.findRandomFourStudents(communityId, myId)
                 .stream().map(StudentResponse::from)
-                .toList());
+                .toList();
     }
 
-    public ResponseEntity<StudentDetailResponse> getStudent(String myId, String userId) {
+    public StudentDetailResponse getStudent(String myId, String userId) {
+
         Student student = studentRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("Resource not exists"));
 
-        int followerCount = followRepository.findAllByFollowingUserId(userId).size();
-        int followingCount = followRepository.findAllByFollowerUserId(userId).size();
+        int followerCount = followRepository.countByFollowingUserId(student.getId());
+        int followingCount = followRepository.countByFollowerUserId(student.getId());
         List<HashtagDto> hashtagDtoList = student.getHashtags().stream()
                 .map(studentHashtag -> HashtagDto.from(studentHashtag.getHashtag()))
                 .toList();
@@ -143,11 +131,17 @@ public class StudentService {
             isFollowedByMe = isFollowedByMe(myId, userId);
         }
 
-        return ResponseEntity.ok(StudentDetailResponse.from(student, isFollowedByMe, followerCount, followingCount, hashtagDtoList));
+        return StudentDetailResponse.from(student, isFollowedByMe, followerCount, followingCount, hashtagDtoList);
     }
 
     private boolean isFollowedByMe(String myId, String followerId){
         Optional<Follow> follow = followRepository.findByFollowerUserIdAndFollowingUserId(myId, followerId);
         return follow.isPresent();
+    }
+
+    public boolean isDuplicated(String userId) {
+        Student student = studentRepository.findByUserId(userId).orElse(null);
+
+        return student != null;
     }
 }

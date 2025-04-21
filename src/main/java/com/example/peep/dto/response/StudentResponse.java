@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public record StudentResponse(
     String userId,
     String name,
-    PhotoDto photoDto,
+    String photoUrl,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean isFollowedByMe
 ) {
@@ -23,9 +23,8 @@ public record StudentResponse(
         return new StudentResponse(
                 student.getUserId(),
                 student.getName(),
-                PhotoDto.from(student.getPhoto()),
+                student.getPhoto().getPhotoUrl(),
                 isFollowedByMe
-
         );
     }
 

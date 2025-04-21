@@ -13,12 +13,12 @@ import com.example.peep.dto.QuestionDto;
 import com.example.peep.dto.StudentQuestionDto;
 import com.example.peep.dto.response.ChosenQuestionResponse;
 import com.example.peep.dto.response.HomeQuestionListResponse;
-import com.example.peep.errors.errorcode.CustomErrorCode;
-import com.example.peep.errors.exception.RestApiException;
+import com.example.peep.errors.ErrorCode;
+import com.example.peep.errors.PeepApiException;
 import com.example.peep.repository.*;
+import com.example.peep.details.HintUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -40,41 +40,42 @@ public class QuestionService {
     private final CommunityQuestionRepository communityQuestionRepository;
     private final StudentCommunityQuestionRepository studentCommunityQuestionRepository;
     private final StudentQuestionRepository studentQuestionRepository;
+    private final HintUtils hintUtils;
 
-    public ResponseEntity<Void> commonChooseStudent(String myId, String userId, Long communityQuestionId) {
+    public String commonChooseStudent(String myId, String userId, Long communityQuestionId) {
 
         Student writer = studentRepository.findByUserId(myId).orElseThrow();
 
-        Student chosen = studentRepository.findByUserId(userId).orElseThrow();
+        Student chosen = studentRepository.findByUserId(userId).orElseThrow(() -> new PeepApiException(ErrorCode.USER_NOT_FOUND));
 
-        CommunityQuestion communityQuestion = communityQuestionRepository.findById(communityQuestionId).orElseThrow();
+        CommunityQuestion communityQuestion = communityQuestionRepository.findById(communityQuestionId).orElseThrow(() -> new PeepApiException(ErrorCode.INVALID_PARAMETER));
 
         StudentCommunityQuestion studentCommunityQuestion = StudentCommunityQuestion.of(writer, chosen, communityQuestion);
 
         studentCommunityQuestionRepository.save(studentCommunityQuestion);
 
-        return ResponseEntity.noContent().build();
+        return "Success choose student";
 
     }
 
-    public ResponseEntity<Void> randomChooseStudent(String myId, String userId, Long studentQuestionId) {
+    public String randomChooseStudent(String myId, String userId, Long studentQuestionId) {
 
-        Student chosen = studentRepository.findByUserId(userId).orElseThrow();
+        Student chosen = studentRepository.findByUserId(userId).orElseThrow(() -> new PeepApiException(ErrorCode.USER_NOT_FOUND));
 
-        StudentQuestion studentQuestion = studentQuestionRepository.findById(studentQuestionId).orElseThrow();
+        StudentQuestion studentQuestion = studentQuestionRepository.findById(studentQuestionId).orElseThrow(() -> new PeepApiException(ErrorCode.RESOURCE_NOT_FOUND, "Cannot find Question"));
 
         if(!Objects.equals(studentQuestion.getWriter().getUserId(), myId)) {
-            throw new RestApiException(CustomErrorCode.WRONG_VERIFICATION_CODE);
+            throw new PeepApiException(ErrorCode.INVALID_PARAMETER);
         }
         studentQuestion.setChosen(chosen);
 
         studentQuestionRepository.save(studentQuestion);
 
-        return ResponseEntity.noContent().build();
+        return "Success choose student";
     }
 
 
-    public ResponseEntity<HomeQuestionListResponse> getQuestionList(String myId) {
+    public HomeQuestionListResponse getQuestionList(String myId) {
 
 
         List<StudentCommunity> studentCommunities = studentCommunityRepository.findAllByStudentUserId(myId);
@@ -95,12 +96,10 @@ public class QuestionService {
                     studentQuestionList.add(StudentQuestionDto.from(studentQuestion));
                 });
 
-        HomeQuestionListResponse homeResponse = HomeQuestionListResponse.of(communityQuestionDtoList, studentQuestionList);
-
-        return ResponseEntity.ok(homeResponse);
+        return HomeQuestionListResponse.of(communityQuestionDtoList, studentQuestionList);
     }
 
-    public ResponseEntity<List<ChosenQuestionResponse>> getChosenQuestionList(String myId) {
+    public List<ChosenQuestionResponse> getChosenQuestionList(String myId) {
 
         List<ChosenQuestionResponse> questionResponseList = new ArrayList<>();
 
@@ -126,10 +125,35 @@ public class QuestionService {
 
         questionResponseList.sort(Comparator.comparing(ChosenQuestionResponse::chosenDate).reversed());
 
-        return ResponseEntity.ok(questionResponseList);
+        return questionResponseList;
     }
-    //TODO: 대용량 처리가 예상됨으로 spring batch 도입 고려
 
+    public String getCommonQuestionWriterHint(String myId, Long scqId) {
+
+        StudentCommunityQuestion scq = studentCommunityQuestionRepository.findById(scqId).orElseThrow(() -> new PeepApiException(ErrorCode.INVALID_PARAMETER));
+
+        if(!Objects.equals(scq.getChosenInCommunity().getUserId(), myId)) {
+            throw new PeepApiException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        return hintUtils.getHint(scq.getWriterInCommunity(), 7);
+    }
+
+    public String getRandomQuestionWriterHint(String myId, Long sqId) {
+        StudentQuestion sq = studentQuestionRepository.findById(sqId).orElseThrow(() -> new PeepApiException(ErrorCode.INVALID_PARAMETER));
+
+        if(!Objects.equals(sq.getChosen().getUserId(), myId)) {
+            throw new PeepApiException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        return hintUtils.getHint(sq.getWriter(), 8);
+
+    }
+
+
+
+    //TODO: 대용량 처리가 예상됨으로 spring batch 도입 고려
+    //TODO: 모든 사용자에게 매시간마다 업데이트 하기에 너무 많은 용량을 차지할것이 예상되어 답변한 대상으로만 질문 업데이트 고려
     @Scheduled(fixedRate = 1000 * 60 * 60 * 3, initialDelay = 1000 * 30)
     public void updateRandomCommunityQuestion() {
         List<Community> communities = communityRepository.findAll();
@@ -159,6 +183,10 @@ public class QuestionService {
         }
         studentQuestionRepository.saveAll(studentQuestions);
     }
+
+
+
+
 
 
 }
