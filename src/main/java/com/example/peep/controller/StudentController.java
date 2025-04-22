@@ -47,9 +47,16 @@ public class StudentController {
     }
 //  TODO: 탈퇴계정 복구 방법 고민  @PostMapping("/restore")
 
-    @GetMapping("/getFourStudents")
-    public Response<List<StudentResponse>> getFourStudents(Authentication authentication,
+    @GetMapping("/getFourStudentsInCommunity")
+    public Response<List<StudentResponse>> getFourStudentsInCommunity(Authentication authentication,
                                                  @RequestParam("communityId") Long communityId) {
-        return Response.success(studentService.getFourStudents(authentication.getName(), communityId));
+        return Response.success(studentService.getFourStudentsInCommunity(authentication.getName(), communityId));
     }
+
+    @GetMapping("/getFourStudentsInMyFollowing")
+    public Response<List<StudentResponse>> getStudentInMyFollowing(Authentication authentication) {
+        return Response.success(studentService.getFourStudentsInMyFollowing(authentication.getName()));
+
+    }
+
 }
