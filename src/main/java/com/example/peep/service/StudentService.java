@@ -110,9 +110,18 @@ public class StudentService {
         return "Success delete [" + myId+"]";
     }
 
-    public List<StudentResponse> getFourStudents(String myId, Long communityId) {
+    public List<StudentResponse> getFourStudentsInCommunity(String myId, Long communityId) {
 
-        return studentRepository.findRandomFourStudents(communityId, myId)
+        return studentRepository.findFourStudentsInCommunity(communityId, myId)
+                .stream().map(StudentResponse::from)
+                .toList();
+    }
+
+    public List<StudentResponse> getFourStudentsInMyFollowing(String myId) {
+
+        Student student = studentRepository.findByUserId(myId).orElseThrow();
+
+        return studentRepository.findFourStudentsInMyFollowing(student.getId())
                 .stream().map(StudentResponse::from)
                 .toList();
     }
@@ -144,4 +153,6 @@ public class StudentService {
 
         return student != null;
     }
+
+
 }
