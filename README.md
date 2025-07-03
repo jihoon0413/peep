@@ -36,6 +36,49 @@
 * 알람 기능 추가
 * 질문 생성시 방대한 많은 데이터가 만들어지기 때문에 Spring Batch 도입 고려
 
+## UI이미지 🖼️
+<details>
+<summary>로그인, 회원가입 화면 </summary>
+<div markdown="1">
+ 
+![image](https://github.com/user-attachments/assets/656e70e5-23fa-4a67-ace7-5e39a016883b)
+![image](https://github.com/user-attachments/assets/af5d6d53-243f-4045-badb-895bcd1db625)
+</div>
+</details>
+
+<details>
+<summary>홈 화면 </summary>
+<div markdown="1">
+ 
+![image](https://github.com/user-attachments/assets/96fdafb9-4bfc-4480-b579-5e68e4c69bfe)
+</div>
+</details>
+
+<details>
+<summary>질문 지목 화면 </summary>
+<div markdown="1">
+ 
+![image](https://github.com/user-attachments/assets/72e48f81-8673-4c40-8c8f-8ff101d4f312)
+![image](https://github.com/user-attachments/assets/221b4f31-25cf-4c7d-a29d-50878aaac2da)
+</div>
+</details>
+
+<details>
+<summary>친구 관리 화면 </summary>
+<div markdown="1">
+ 
+![image](https://github.com/user-attachments/assets/31b6a17d-af94-4372-a9a2-a9edbaa57136)
+</div>
+</details>
+
+<details>
+<summary>지목 받은 질문 리스트 화면 </summary>
+<div markdown="1">
+ 
+![image](https://github.com/user-attachments/assets/79c6e012-d0a0-46ff-a13d-e4228c61a803)
+</div>
+</details>
+
 ## 스택
 ![js](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![js](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
