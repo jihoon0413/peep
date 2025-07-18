@@ -28,7 +28,7 @@ public class AuthController {
                                     @RequestHeader("Device-Id") String deviceId,
                                     @RequestHeader("refresh-token") String refreshToken,
                                     Authentication authentication) {
-        return Response.success(authService.refreshToken(deviceId, refreshToken));
+        return Response.success(authService.refreshToken(deviceId, refreshToken, authentication.getName()));
     }
 
     @PostMapping("/logout")
