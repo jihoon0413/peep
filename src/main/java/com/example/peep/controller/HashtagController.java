@@ -26,7 +26,7 @@ public class HashtagController {
     public Response<List<HashtagDto>> getMyHashtag(Authentication authentication) {
         return Response.success(hashtagService.getMyHashtag(authentication.getName()));
     }
-
+//TODO: hashtag list -> 하나씩해서 실시간으로 반영
     @PostMapping("/setMyHashtag")
     public Response<String> setMyHashtag(
             Authentication authentication,

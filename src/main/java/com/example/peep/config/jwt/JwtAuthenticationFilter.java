@@ -22,18 +22,53 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String token = resolveToken(servletRequest);
 
-
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(isAccessToken(servletRequest)) {
+            processAccessToken(servletRequest, servletResponse);
+        } else if(isRefreshToken(servletRequest)) {
+            processRefreshToken(servletRequest, servletResponse);
         }
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private String resolveToken(HttpServletRequest request) {
+    private void processAccessToken(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        String token = resolveAccess(servletRequest);
+
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            Authentication authentication = jwtTokenProvider.getAccessAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+    }
+
+    private void processRefreshToken(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        String token = resolveRefresh(servletRequest);
+
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            Authentication authentication = jwtTokenProvider.getRefreshAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
+    }
+
+    private boolean isAccessToken(HttpServletRequest request) {
+        return request.getHeader("Authorization") != null;
+    }
+
+    private boolean isRefreshToken(HttpServletRequest request) {
+        return request.getHeader("refresh-token") != null;
+    }
+
+    private String resolveAccess(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    private String resolveRefresh(HttpServletRequest request) {
+        String bearerToken = request.getHeader("refresh-token");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
             return bearerToken.substring(7);
         }

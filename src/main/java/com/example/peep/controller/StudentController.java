@@ -19,6 +19,7 @@ public class StudentController {
 
     private final StudentService studentService;
 
+    //TODO: 마이페이지, 친구조회 api나누기
     @GetMapping
     public Response<StudentDetailResponse> getStudent(Authentication authentication,
                                                             @RequestParam("userId") String userId) {

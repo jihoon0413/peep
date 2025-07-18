@@ -3,7 +3,6 @@ package com.example.peep.service;
 import com.example.peep.config.jwt.JwtToken;
 import com.example.peep.config.jwt.JwtTokenProvider;
 import com.example.peep.details.SmsUtil;
-import com.example.peep.domain.RefreshToken;
 import com.example.peep.domain.Student;
 import com.example.peep.domain.enumType.Event;
 import com.example.peep.dto.response.JwtTokenResponse;
@@ -11,7 +10,6 @@ import com.example.peep.dto.request.LoginRequest;
 import com.example.peep.dto.request.VerifyCodeRequestDto;
 import com.example.peep.errors.ErrorCode;
 import com.example.peep.errors.PeepApiException;
-import com.example.peep.repository.RefreshTokenRepository;
 import com.example.peep.repository.StudentRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -29,7 +27,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshService refreshService;
     private final RecordService recordService;
     private final TokenBlacklistService tokenBlacklistService;
     private final VerificationCodeService verificationCodeService;
@@ -47,23 +45,22 @@ public class AuthService {
 
         recordService.recordEvent(request, student.getUserId(), Event.LOG_IN);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByUserIdAndDeviceId(student.getUserId(), request.getHeader("Device-Id"));
-        if(refreshToken != null) {
-            throw new PeepApiException(ErrorCode.ALREADY_EXECUTION, String.format("%s is already logged in to this device", student.getUserId()));
-        }
         return JwtTokenResponse.from(jwtTokenProvider.generateToken(student.getUserId(), request.getHeader("Device-Id")));
     }
 
-    public JwtTokenResponse refreshToken(String deviceId, String token) {
+    public JwtTokenResponse refreshToken(String deviceId, String token, String userId) {
 
         String refreshToken = token.substring(7);
 
-        RefreshToken refresh = refreshTokenRepository.findByTokenAndDeviceId(refreshToken, deviceId);
+//        RefreshToken refresh = refreshTokenRepository.findByTokenAndDeviceId(refreshToken, deviceId);
 
-        if (refresh != null && jwtTokenProvider.validateToken(refresh.getToken())) {
-            JwtToken jwtToken = jwtTokenProvider.generateToken(refresh.getUserId(), deviceId);
-            refresh.setToken(jwtToken.getRefreshToken());
-            refreshTokenRepository.save(refresh);
+        String key = userId + ":" + deviceId;
+        String refresh = refreshService.getRefreshToken(key);
+
+        if (refresh != null && jwtTokenProvider.validateToken(refresh)) {
+            JwtToken jwtToken = jwtTokenProvider.generateToken(userId, deviceId);
+            refresh = jwtToken.getRefreshToken();
+            refreshService.addRefreshToken(key, refresh);
             return JwtTokenResponse.from(jwtToken);
         } else {
             throw new PeepApiException(ErrorCode.INVALID_TOKEN);
@@ -78,8 +75,8 @@ public class AuthService {
 
         tokenBlacklistService.addToBlacklist(accessToken);
 
-        refreshTokenRepository.deleteByUserIdAndDeviceId(id, deviceId);
-
+        String key = id + ":" + deviceId;
+        refreshService.deleteRefreshToken(key);
         return "Logout successful";
     }
 
@@ -87,7 +84,7 @@ public class AuthService {
         String phoneNum = phone.replaceAll("-","");
 
         String verificationCode = Integer.toString((int)(Math.random() * (999999 - 100000 + 1)) + 100000);
-        //TODO: 비용문제로 주석처리 해놓은 해제시킬 필요 있음
+
         smsUtil.sendOne(phoneNum, verificationCode);
 
         verificationCodeService.saveVerificationCode(phone, verificationCode);
