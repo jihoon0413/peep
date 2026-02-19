@@ -4,9 +4,21 @@ import com.example.peep.errors.ErrorCode;
 import com.example.peep.errors.PeepApiException;
 import com.example.peep.service.RefreshService;
 import com.example.peep.service.TokenBlacklistService;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,20 +29,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Component
 public class JwtTokenProvider {
 
     private final Key key;
-//    private final long expiration = 1000 * 60 * 30; //30min
-    private final long expiration = 1000 * 30; //30sec
+    private final long expiration = 1000 * 60 * 30; //30min
+//    private final long expiration = 1000 * 30; //30sec
     private final long refreshExpiration = 1000 * 60 * 60 * 24 * 7; //1week
 
     private final TokenBlacklistService tokenBlacklistService;
@@ -68,8 +73,11 @@ public class JwtTokenProvider {
 
         Date accessTokenExpiresIn = new Date(now + expiration);
 
+        String jti = UUID.randomUUID().toString();
+
         String accessToken = Jwts.builder()
                 .setSubject(userId)
+                .id(jti)
                 .claim("auth", "ROLE_USER")
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
